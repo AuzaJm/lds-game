@@ -326,6 +326,7 @@
     let roomData = null;
     let timerInterval = null;
     let hasAnsweredCurrentQ = false;
+    let renderedQIndex = -1;
 
     const TEAMS = [
       { id: 'Gold', name: 'Celestial Gold', color: 'text-amber-400', border: 'border-amber-500/40', bg: 'bg-amber-500/10' },
@@ -345,16 +346,7 @@
         { q: '"Remember that it is upon the rock of our Redeemer, who is Christ... that ye must build your foundation."', options: ['Helaman 5:12', 'Alma 32:21', 'Ether 12:6', '3 Nephi 18:15'], correct: 0 },
         { q: '"And when ye shall receive these things, I would exhort you that ye would ask God, the Eternal Father..."', options: ['Moroni 10:4-5', 'Alma 7:11', 'Mosiah 3:19', '2 Nephi 31:20'], correct: 0 },
         { q: '"For the natural man is an enemy to God..."', options: ['Mosiah 3:19', 'Alma 37:37', '1 Nephi 19:23', 'Ether 12:27'], correct: 0 },
-        { q: '"Counsel with the Lord in all thy doings, and he will direct thee for good..."', options: ['Alma 37:37', 'Alma 32:21', 'Mosiah 4:30', 'Moroni 7:45'], correct: 0 },
-        { q: '"Faith is not to have a perfect knowledge of things..."', options: ['Alma 32:21', 'Ether 12:6', 'Moroni 7:33', '2 Nephi 2:27'], correct: 0 },
-        { q: '"The glory of God is intelligence..."', options: ['D&C 93:36', 'D&C 130:22', 'D&C 88:124', 'D&C 121:36'], correct: 0 },
-        { q: '"Choose ye this day whom ye will serve..."', options: ['Joshua 24:15', '1 Samuel 16:7', 'Isaiah 58:13-14', 'Malachi 3:8-10'], correct: 0 },
-        { q: '"If any of you lack wisdom, let him ask of God..."', options: ['James 1:5-6', 'Hebrews 12:9', '1 Corinthians 6:19-20', 'Galatians 5:22-23'], correct: 0 },
-        { q: '"Feast upon the words of Christ; for behold, the words of Christ will tell you all things what ye should do."', options: ['2 Nephi 32:3', '2 Nephi 31:20', '1 Nephi 8:30', 'Mosiah 2:41'], correct: 0 },
-        { q: '"Press forward with a steadfastness in Christ, having a perfect brightness of hope..."', options: ['2 Nephi 31:20', 'Alma 5:14', 'Mosiah 18:8-10', 'Ether 12:4'], correct: 0 },
-        { q: '"If ye love me, keep my commandments."', options: ['John 14:15', 'Matthew 22:36-39', 'John 15:13', '1 John 4:19'], correct: 0 },
-        { q: '"Be thou an example of the believers, in word, in conversation, in charity..."', options: ['1 Timothy 4:12', '2 Timothy 3:16-17', 'Philippians 4:13', 'Romans 8:28'], correct: 0 },
-        { q: '"I can do all things through Christ which strengtheneth me."', options: ['Philippians 4:13', 'Ephesians 6:11', 'Colossians 3:12', 'Hebrews 11:1'], correct: 0 }
+        { q: '"Counsel with the Lord in all thy doings, and he will direct thee for good..."', options: ['Alma 37:37', 'Alma 32:21', 'Mosiah 4:30', 'Moroni 7:45'], correct: 0 }
       ],
       'word-scramble': [
         { q: 'Book of Mormon Prophet', prompt: 'E P H I N', answer: 'NEPHI' },
@@ -366,50 +358,21 @@
         { q: 'First Prophet of the Restoration', prompt: 'H P E S O J', answer: 'JOSEPH' },
         { q: 'Ancient Nephite King & Teacher', prompt: 'H A I S O M', answer: 'MOSIAH' },
         { q: 'Lamanite Prophet on the Wall', prompt: 'L E U M A S', answer: 'SAMUEL' },
-        { q: 'Hill where Gold Plates were Buried', prompt: 'H A R O M U C', answer: 'CUMORAH' },
-        { q: 'First Principle of the Gospel', prompt: 'H T I A F', answer: 'FAITH' },
-        { q: 'Turning from Sin to God', prompt: 'E C N A T N E P E R', answer: 'REPENTANCE' },
-        { q: 'Holy Covenant Ordinance', prompt: 'M S I T P A B', answer: 'BAPTISM' },
-        { q: 'Brother of Jared’s Vessel', prompt: 'G E A R A B', answer: 'BARGE' },
-        { q: 'Valley of Lehi’s First Camp', prompt: 'U E L E M E L', answer: 'LEMUEL' },
-        { q: 'Guide & Compass for Lehi', prompt: 'A N I H O A H A L R', answer: 'LIANHONA' },
-        { q: 'Sacred Grove State', prompt: 'K R O Y W E N', answer: 'NEWYORK' },
-        { q: 'Title of Liberty Captain', prompt: 'I N O R O M', answer: 'MORONI' },
-        { q: 'Land of First Inheritance', prompt: 'I H P E N', answer: 'NEPHI' }
+        { q: 'Hill where Gold Plates were Buried', prompt: 'H A R O M U C', answer: 'CUMORAH' }
       ],
       'history-timeline': [
         { q: 'Which event occurred FIRST in Church History?', options: ['First Vision in Sacred Grove', 'Organization of Church (1830)', 'Pioneers Enter Salt Lake Valley', 'Dedication of Kirtland Temple'], correct: 0 },
         { q: 'Which event occurred LAST in Church History?', options: ['Publication of Book of Mormon', 'The First Vision', 'Exodus to Utah Territory', 'Martyrdom at Carthage Jail'], correct: 2 },
         { q: 'Year the Church was officially organized in Fayette, NY:', options: ['1830', '1820', '1844', '1847'], correct: 0 },
         { q: 'Year Joseph Smith had the First Vision:', options: ['1820', '1830', '1823', '1838'], correct: 0 },
-        { q: 'Year the Mormon Pioneers entered the Salt Lake Valley:', options: ['1847', '1830', '1850', '1860'], correct: 0 },
-        { q: 'Which Temple was dedicated FIRST in this dispensation?', options: ['Kirtland Temple', 'Nauvoo Temple', 'Salt Lake Temple', 'St. George Temple'], correct: 0 },
-        { q: 'Who served as the Second President of the Church?', options: ['Brigham Young', 'John Taylor', 'Wilford Woodruff', 'Lorenzo Snow'], correct: 0 },
-        { q: 'In which city were the Gold Plates translated mainly?', options: ['Harmony, PA & Fayette, NY', 'Nauvoo, IL', 'Salt Lake City, UT', 'Kirtland, OH'], correct: 0 },
-        { q: 'Primary scribe for the translation of the Book of Mormon:', options: ['Oliver Cowdery', 'Martin Harris', 'David Whitmer', 'Hyrum Smith'], correct: 0 },
-        { q: 'Where was the Female Relief Society first organized?', options: ['Nauvoo, Illinois', 'Kirtland, Ohio', 'Fayette, New York', 'Independence, Missouri'], correct: 0 },
-        { q: 'Year the Gold Plates were delivered to Joseph Smith by Moroni:', options: ['1827', '1820', '1830', '1844'], correct: 0 },
-        { q: 'Location of the Carthage Jail where Joseph and Hyrum were martyred:', options: ['Illinois', 'Missouri', 'Ohio', 'New York'], correct: 0 },
-        { q: 'Who witnessed the restoration of the Aaronic Priesthood?', options: ['Joseph Smith & Oliver Cowdery', 'The 3 Witnesses', 'Brigham Young', 'Joseph & Hyrum Smith'], correct: 0 },
-        { q: 'Heavenly messenger who restored the Aaronic Priesthood:', options: ['John the Baptist', 'Peter, James, & John', 'Elijah', 'Moroni'], correct: 0 },
-        { q: 'Heavenly messengers who restored the Melchizedek Priesthood:', options: ['Peter, James, and John', 'John the Baptist', 'Moses and Elias', 'Gabriel'], correct: 0 }
+        { q: 'Year the Mormon Pioneers entered the Salt Lake Valley:', options: ['1847', '1830', '1850', '1860'], correct: 0 }
       ],
       'gospel-wordle': [
         { q: '5-Letter Gospel Vocabulary', hint: 'First principle of the Gospel.', answer: 'FAITH' },
         { q: '5-Letter Gospel Vocabulary', hint: 'Sacred house of the Lord.', answer: 'TEMPLE' },
         { q: '5-Letter Gospel Vocabulary', hint: 'Unmerited divine help and favor.', answer: 'GRACE' },
         { q: '5-Letter Gospel Vocabulary', hint: 'To make at-one with God through Christ.', answer: 'ATONE' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Book of Mormon Prophet and Judge.', answer: 'ALMA' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Light of Christ that fills the world.', answer: 'LIGHT' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Gospel knowledge opposing falsehood.', answer: 'TRUTH' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Opposite of pride, necessary for baptism.', answer: 'MEEK' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Deep spiritual feeling of happiness.', answer: 'JOY' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Prophet who prayed all day and night.', answer: 'ENOS' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Divine title for God Almighty.', answer: 'LORD' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Pure in heart living in unity.', answer: 'ZION' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'River where Alma baptized Nephites.', answer: 'MORMON' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'The straight and narrow...', answer: 'PATH' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Spiritual gift to discern truth.', answer: 'GIFTS' }
+        { q: '5-Letter Gospel Vocabulary', hint: 'Book of Mormon Prophet and Judge.', answer: 'ALMA' }
       ]
     };
 
@@ -567,6 +530,7 @@
         }
 
         if (roomData.status === 'lobby') {
+          renderedQIndex = -1;
           updateLobbyUI();
           showScreen('screen-lobby');
         } else if (roomData.status === 'playing') {
@@ -688,7 +652,6 @@
     function resetToLobby() {
       if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
 
-      // Reset all player scores
       const updates = {};
       if (roomData.players) {
         Object.keys(roomData.players).forEach(pId => {
@@ -728,7 +691,7 @@
           const questionsList = MASTER_QUESTIONS[mode] || [];
           const nextQ = (roomData.currentQuestionIndex || 0) + 1;
 
-          if (nextQ < 10 && nextQ < questionsList.length) {
+          if (nextQ < Math.min(10, questionsList.length)) {
             db.ref('rooms/' + currentRoomCode).update({
               currentQuestionIndex: nextQ,
               timer: 20
@@ -743,7 +706,7 @@
       }, 1000);
     }
 
-    // 5. GAME PLAY ENGINE & INPUT FIX
+    // 5. GAME ENGINE & STABLE INPUT FOCUS FIX
     function launchGameEngine() {
       showScreen('screen-game');
       const gameMode = roomData.selectedGame || 'speed-blitz';
@@ -755,7 +718,12 @@
       document.getElementById('q-total').innerText = Math.min(10, questionsList.length);
       document.getElementById('game-timer').innerText = (roomData.timer !== undefined ? roomData.timer : 20) + 's';
 
-      renderActiveQuestion(gameMode, qIndex);
+      // ONLY re-render question card if question index changed to keep mobile input keyboard focused!
+      if (renderedQIndex !== qIndex) {
+        renderedQIndex = qIndex;
+        renderActiveQuestion(gameMode, qIndex);
+      }
+
       renderLiveStandings();
     }
 
@@ -839,8 +807,6 @@
       } else {
         alert('❌ Incorrect choice!');
       }
-
-      launchGameEngine();
     }
 
     function renderLiveStandings() {
