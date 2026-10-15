@@ -1,1153 +1,722 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-950">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scripture Quest: Multi-Game Suite | LDS Youth & Seminar Platform</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Scripture Quest: LDS Team Edition</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Google Fonts: Cinzel & Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        navy: {
-                            950: '#060B18',
-                            900: '#0A1128',
-                            800: '#1C2541',
-                            700: '#2A365C',
-                            600: '#3A4B7C',
-                        },
-                        gold: {
-                            300: '#FFE57F',
-                            400: '#F4C430',
-                            500: '#D4AF37',
-                            600: '#AA820A',
-                            700: '#856404',
-                        },
-                        royal: {
-                            500: '#2563EB',
-                            600: '#1D4ED8',
-                            700: '#1E40AF',
-                        },
-                        emerald: {
-                            500: '#10B981',
-                            600: '#059669',
-                        },
-                        sapphire: {
-                            500: '#0284C7',
-                            600: '#0369A1',
-                        }
-                    },
-                    fontFamily: {
-                        serif: ['Cinzel', 'serif'],
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    animation: {
-                        'glow-pulse': 'glow 3s infinite ease-in-out',
-                        'float': 'float 4s infinite ease-in-out',
-                        'progress': 'progress 5s linear forwards',
-                    },
-                    keyframes: {
-                        glow: {
-                            '0%, 100%': { boxShadow: '0 0 25px rgba(212, 175, 55, 0.25)', borderColor: 'rgba(212, 175, 55, 0.4)' },
-                            '50%': { boxShadow: '0 0 45px rgba(212, 175, 55, 0.65)', borderColor: 'rgba(244, 196, 48, 0.85)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-8px)' },
-                        },
-                        progress: {
-                            '0%': { width: '0%' },
-                            '100%': { width: '100%' }
-                        }
-                    }
-                }
-            }
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: { 300: '#fde047', 400: '#facc15', 500: '#eab308', 600: '#ca8a04', 700: '#a16207' },
+            celestial: { 800: '#0B192C', 900: '#030712', 950: '#020617' }
+          }
         }
-    </script>
+      }
+    }
+  </script>
 
-    <style>
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #0A1128;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #2A365C;
-            border-radius: 9999px;
-        }
-
-            ::-webkit-scrollbar-thumb:hover {
-                background: #D4AF37;
-            }
-
-        .glass-panel {
-            background: rgba(28, 37, 65, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
-
-        .glass-panel-gold {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(28, 37, 65, 0.8) 100%);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(212, 175, 55, 0.4);
-        }
-
-        .gold-gradient-text {
-            background: linear-gradient(135deg, #FFF1B0 0%, #D4AF37 50%, #9A7B1C 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .gold-gradient-bg {
-            background: linear-gradient(135deg, #F4C430 0%, #D4AF37 50%, #A37E10 100%);
-        }
-
-        .bg-stars {
-            background-image: radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.25), rgba(0,0,0,0)), radial-gradient(2px 2px at 40px 70px, rgba(212, 175, 55, 0.35), rgba(0,0,0,0)), radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.2), rgba(0,0,0,0)), radial-gradient(2px 2px at 160px 120px, rgba(212, 175, 55, 0.25), rgba(0,0,0,0));
-            background-repeat: repeat;
-            background-size: 220px 220px;
-        }
-    </style>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030712; color: #f8fafc; }
+    .font-cinzel { font-family: 'Cinzel', serif; }
+    .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(234, 179, 8, 0.2); }
+    .gold-glow { box-shadow: 0 0 25px rgba(234, 179, 8, 0.25); }
+  </style>
 </head>
-<body class="h-full bg-navy-950 text-slate-100 font-sans bg-stars antialiased selection:bg-gold-500 selection:text-navy-950 flex flex-col justify-between overflow-x-hidden">
+<body class="min-h-screen flex flex-col justify-between selection:bg-gold-500 selection:text-slate-950">
 
-    <!-- APP CONTAINER -->
-    <div id="app" class="min-h-screen flex flex-col justify-between relative z-10 max-w-6xl mx-auto w-full px-4 py-5">
+  <!-- TOP BAR -->
+  <header class="w-full border-b border-gold-500/20 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-slate-950 shadow-md">
+          <i data-lucide="book-open-check" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h1 class="font-cinzel font-bold text-lg text-gold-400 tracking-wider">SCRIPTURE QUEST</h1>
+          <p class="text-[10px] text-slate-400 tracking-widest uppercase -mt-1">Doctrinal Mastery</p>
+        </div>
+      </div>
+      <div id="user-badge" class="hidden items-center gap-2 bg-slate-900 border border-slate-700/60 rounded-full px-3 py-1 text-xs">
+        <span id="badge-avatar" class="text-base">🛡️</span>
+        <span id="badge-name" class="font-semibold text-slate-200">Guest</span>
+      </div>
+    </div>
+  </header>
 
-        <!-- HEADER (Hidden on Splash Screen) -->
-        <header id="main-header" class="hidden transition-opacity duration-500 flex items-center justify-between py-3 px-6 glass-panel rounded-2xl mb-6 shadow-2xl">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="goToScreen('menu-screen')">
-                <div class="w-10 h-10 rounded-full gold-gradient-bg flex items-center justify-center text-navy-950 font-bold shadow-lg shadow-gold-500/20">
-                    <i class="fa-solid fa-cross text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="font-serif font-extrabold text-lg tracking-wider gold-gradient-text">SCRIPTURE QUEST</h1>
-                    <p class="text-[10px] tracking-widest text-gold-400 uppercase font-semibold">Multi-Game Platform</p>
-                </div>
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
+    
+    <!-- 1. SPLASH SCREEN -->
+    <section id="screen-splash" class="w-full max-w-md text-center py-12 flex flex-col items-center justify-center">
+      <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-gold-300 via-gold-500 to-amber-700 flex items-center justify-center text-slate-950 shadow-2xl gold-glow mb-6 transform hover:scale-105 transition-all">
+        <i data-lucide="shield-check" class="w-14 h-14"></i>
+      </div>
+      <h1 class="font-cinzel text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-gold-400 to-amber-500 mb-2">SCRIPTURE QUEST</h1>
+      <p class="text-sm text-slate-400 mb-8 max-w-xs">An Interactive Doctrinal Mastery & Gospel Knowledge Multi-Game Suite</p>
+      
+      <div class="w-full max-w-xs bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+        <p class="text-xs text-slate-400 mb-2">Preparing Sacred Records...</p>
+        <div class="w-full bg-slate-800 rounded-full h-2 mb-3 overflow-hidden">
+          <div id="splash-progress" class="bg-gradient-to-r from-gold-500 to-amber-400 h-2 rounded-full w-0 transition-all duration-1000"></div>
+        </div>
+        <span id="splash-countdown" class="text-xs font-mono text-gold-400 font-bold">5s</span>
+      </div>
+    </section>
+
+    <!-- 2. GUEST REGISTRATION -->
+    <section id="screen-auth" class="hidden w-full max-w-md">
+      <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border border-gold-500/30">
+        <div class="text-center mb-6">
+          <div class="inline-flex p-3 rounded-2xl bg-gold-500/10 text-gold-400 mb-3 border border-gold-500/20">
+            <i data-lucide="user-plus" class="w-6 h-6"></i>
+          </div>
+          <h2 class="font-cinzel text-2xl font-bold text-slate-100">Player Profile</h2>
+          <p class="text-xs text-slate-400">Enter your name to join the game server</p>
+        </div>
+
+        <form id="form-auth" onsubmit="saveProfile(event)" class="space-y-5">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Display Name</label>
+            <input type="text" id="input-name" required max="15" placeholder="e.g. Brother Nephi" class="w-full bg-slate-950/80 border border-slate-700 focus:border-gold-400 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 outline-none transition" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Choose Avatar Emblem</label>
+            <div class="grid grid-cols-5 gap-2">
+              <button type="button" onclick="selectAvatar('🛡️')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center active">🛡️</button>
+              <button type="button" onclick="selectAvatar('📜')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center">📜</button>
+              <button type="button" onclick="selectAvatar('⚔️')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center">⚔️</button>
+              <button type="button" onclick="selectAvatar('👑')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center">👑</button>
+              <button type="button" onclick="selectAvatar('🕊️')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center">🕊️</button>
             </div>
+          </div>
 
-            <!-- Current Profile & Room Header Badge -->
-            <div id="user-header-badge" class="flex items-center space-x-3 bg-navy-900/90 py-1.5 px-4 rounded-full border border-gold-500/25">
-                <span id="header-avatar-icon" class="text-xl">🎺</span>
-                <div class="text-right">
-                    <p id="header-player-name" class="text-xs font-semibold text-slate-200">Guest Disciple</p>
-                    <p id="header-room-code" class="text-[10px] text-gold-400 font-mono">Not in Room</p>
-                </div>
+          <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl transition shadow-lg font-cinzel tracking-wider flex items-center justify-center gap-2">
+            ENTER SCRIPTURE QUEST <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 3. MAIN MENU -->
+    <section id="screen-menu" class="hidden w-full max-w-4xl space-y-6">
+      <div class="glass-card p-6 md:p-8 rounded-3xl border border-gold-500/20 text-center relative overflow-hidden">
+        <h2 class="font-cinzel text-2xl md:text-3xl font-extrabold text-gold-400 mb-2">WELCOME TO THE SCRIPTURE SUITE</h2>
+        <p class="text-sm text-slate-300 max-w-xl mx-auto mb-6">Gather your team, select a room, and test your knowledge of scriptures and Latter-day Saint church history.</p>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
+          <button onclick="showHostModal()" class="flex-1 py-4 px-6 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-slate-950 font-bold rounded-2xl shadow-xl flex items-center justify-center gap-3 transition">
+            <i data-lucide="crown" class="w-5 h-5"></i>
+            <span>HOST GAME ROOM</span>
+          </button>
+          <button onclick="showJoinModal()" class="flex-1 py-4 px-6 bg-slate-900 hover:bg-slate-800 border border-gold-500/40 text-slate-100 font-bold rounded-2xl shadow-xl flex items-center justify-center gap-3 transition">
+            <i data-lucide="users" class="w-5 h-5 text-gold-400"></i>
+            <span>JOIN PRIVATE ROOM</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- GAME MODES PREVIEW -->
+      <div>
+        <h3 class="font-cinzel text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+          <i data-lucide="gamepad-2" class="w-5 h-5 text-gold-400"></i> AVAILABLE GAME MODES
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="p-2.5 rounded-xl bg-amber-500/10 text-amber-400"><i data-lucide="zap" class="w-5 h-5"></i></div>
+              <h4 class="font-bold text-slate-100">Doctrinal Mastery Speed Blitz</h4>
             </div>
-        </header>
+            <p class="text-xs text-slate-400">Fast-paced multiple-choice speed rounds. Match key scriptures to references under time pressure.</p>
+          </div>
 
-        <!-- MAIN SCREEN CONTAINER -->
-        <main class="flex-grow flex items-center justify-center">
-
-            <!-- ================= 1. SPLASH SCREEN ================= -->
-            <section id="splash-screen" class="w-full max-w-lg mx-auto text-center flex flex-col items-center justify-center py-12 transition-all duration-700">
-                <div class="relative mb-8 animate-float">
-                    <div class="w-36 h-36 md:w-44 md:h-44 rounded-full glass-panel-gold flex items-center justify-center animate-glow-pulse mx-auto shadow-2xl relative">
-                        <div class="absolute inset-2 border-2 border-dashed border-gold-400/40 rounded-full"></div>
-                        <i class="fa-solid fa-book-bible text-5xl md:text-6xl text-gold-400 drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]"></i>
-                    </div>
-                    <span class="absolute top-0 right-2 text-gold-300 text-xl animate-pulse">✨</span>
-                    <span class="absolute bottom-2 left-2 text-gold-300 text-lg animate-pulse" style="animation-delay: 1s;">⚡</span>
-                </div>
-
-                <h1 class="font-serif text-3xl md:text-5xl font-black tracking-wider gold-gradient-text mb-2">
-                    SCRIPTURE QUEST
-                </h1>
-                <p class="text-gold-400/90 font-serif tracking-widest uppercase text-xs md:text-sm mb-2 font-semibold">
-                    SUITE OF TRUTH & MASTERY
-                </p>
-                <p class="text-slate-400 text-xs md:text-sm max-w-xs mx-auto mb-8">
-                    Youth, Seminary, & Ward Multiplayer Scripture Games
-                </p>
-
-                <!-- Progress Bar & Skip -->
-                <div class="w-full max-w-xs space-y-3">
-                    <div class="w-full bg-navy-800 rounded-full h-2 overflow-hidden border border-gold-500/30 p-0.5">
-                        <div id="splash-progress" class="bg-gradient-to-r from-gold-600 via-gold-400 to-gold-300 h-full rounded-full w-0 animate-progress"></div>
-                    </div>
-                    <button onclick="skipSplash()" class="text-xs text-slate-400 hover:text-gold-300 tracking-wider uppercase transition flex items-center justify-center mx-auto space-x-1 py-1 px-4 rounded-full hover:bg-navy-800/50">
-                        <span>Skip Intro</span>
-                        <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                    </button>
-                </div>
-            </section>
-
-            <!-- ================= 2. GUEST REGISTRATION ================= -->
-            <section id="auth-screen" class="hidden w-full max-w-xl mx-auto glass-panel p-6 md:p-8 rounded-3xl shadow-2xl border border-gold-500/20">
-                <div class="text-center mb-6">
-                    <div class="inline-block p-3 rounded-2xl bg-gold-500/10 text-gold-400 mb-2 border border-gold-500/20">
-                        <i class="fa-solid fa-user-shield text-2xl"></i>
-                    </div>
-                    <h2 class="font-serif text-2xl md:text-3xl font-bold gold-gradient-text">Welcome, Disciple</h2>
-                    <p class="text-slate-400 text-xs md:text-sm mt-1">Set your player profile to join or host game rooms</p>
-                </div>
-
-                <form onsubmit="handleRegistration(event)" class="space-y-6">
-                    <div>
-                        <label class="block text-xs uppercase tracking-wider text-gold-400 font-semibold mb-2">Player Display Name</label>
-                        <div class="relative">
-                            <input type="text" id="player-name-input" required maxlength="18" placeholder="e.g. Brother Nephi, Sister Emma" class="w-full bg-navy-900/90 border border-gold-500/30 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-gold-400 focus:ring-1 focus:ring-gold-400 transition text-sm">
-                            <i class="fa-solid fa-pen text-slate-500 absolute right-4 top-3.5 text-xs"></i>
-                        </div>
-                    </div>
-
-                    <!-- Avatar Selection -->
-                    <div>
-                        <label class="block text-xs uppercase tracking-wider text-gold-400 font-semibold mb-2">Choose Sacred Emblem Avatar</label>
-                        <div class="grid grid-cols-4 sm:grid-cols-4 gap-2.5" id="avatar-selector">
-                            <!-- Rendered dynamically -->
-                        </div>
-                    </div>
-
-                    <button type="submit" class="w-full py-3.5 px-6 gold-gradient-bg text-navy-950 font-bold font-serif rounded-xl shadow-lg shadow-gold-500/20 hover:brightness-110 active:scale-[0.99] transition text-sm uppercase tracking-wider flex items-center justify-center space-x-2">
-                        <span>Enter Main Hub</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </form>
-            </section>
-
-            <!-- ================= 3. ROOM MENU / LOBBY SYSTEM ================= -->
-            <section id="menu-screen" class="hidden w-full max-w-3xl mx-auto space-y-6">
-                <div class="text-center space-y-2">
-                    <h2 class="font-serif text-3xl md:text-4xl font-extrabold gold-gradient-text">Gather the Saints</h2>
-                    <p class="text-slate-400 text-sm">Create a private multiplayer room or enter a code to join an existing session</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Create Room -->
-                    <div class="glass-panel p-6 rounded-2xl border border-gold-500/20 hover:border-gold-500/40 transition flex flex-col justify-between space-y-4 shadow-xl">
-                        <div>
-                            <div class="w-12 h-12 rounded-xl bg-gold-500/10 flex items-center justify-center text-gold-400 text-xl mb-4 border border-gold-500/20">
-                                <i class="fa-solid fa-crown"></i>
-                            </div>
-                            <h3 class="font-serif font-bold text-xl text-slate-100 mb-1">Host New Room</h3>
-                            <p class="text-slate-400 text-xs leading-relaxed">Become Room Host. Select game modes, manage teams, and kick/assign players.</p>
-                        </div>
-                        <button onclick="createRoom()" class="w-full py-3 gold-gradient-bg text-navy-950 font-bold rounded-xl shadow-md hover:brightness-110 transition text-xs uppercase tracking-wider font-serif">
-                            Create Room as Host
-                        </button>
-                    </div>
-
-                    <!-- Join Room -->
-                    <div class="glass-panel p-6 rounded-2xl border border-gold-500/20 hover:border-gold-500/40 transition flex flex-col justify-between space-y-4 shadow-xl">
-                        <div>
-                            <div class="w-12 h-12 rounded-xl bg-royal-500/20 flex items-center justify-center text-blue-400 text-xl mb-4 border border-blue-500/30">
-                                <i class="fa-solid fa-right-to-bracket"></i>
-                            </div>
-                            <h3 class="font-serif font-bold text-xl text-slate-100 mb-1">Join Game Room</h3>
-                            <p class="text-slate-400 text-xs leading-relaxed mb-3">Enter the 6-character room code from your youth leader or host.</p>
-
-                            <input type="text" id="room-code-input" maxlength="6" placeholder="e.g. ZION77" class="w-full bg-navy-900 border border-gold-500/30 rounded-xl px-4 py-2.5 text-center text-slate-100 uppercase font-mono tracking-widest text-lg focus:outline-none focus:border-gold-400">
-                        </div>
-                        <button onclick="joinRoom()" class="w-full py-3 bg-royal-600 hover:bg-royal-500 text-white font-bold rounded-xl shadow-md transition text-xs uppercase tracking-wider font-serif">
-                            Join Existing Room
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ================= 4. MULTI-TEAM LOBBY & HOST CONTROL ================= -->
-            <section id="lobby-screen" class="hidden w-full max-w-5xl mx-auto space-y-6">
-                <!-- Room Control Banner -->
-                <div class="glass-panel-gold p-4 md:p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xs uppercase tracking-widest text-gold-400 font-semibold">Room Code:</span>
-                            <span id="display-room-code" class="font-mono text-2xl font-black text-white bg-navy-900 px-3 py-1 rounded-lg border border-gold-500/40">------</span>
-                            <button onclick="copyRoomCode()" class="text-gold-400 hover:text-gold-300 p-2 text-sm" title="Copy Code">
-                                <i class="fa-regular fa-copy"></i>
-                            </button>
-                        </div>
-                        <p class="text-slate-300 text-xs mt-1">Host: <span id="host-name-display" class="font-semibold text-gold-300">Self</span></p>
-                    </div>
-
-                    <div class="flex items-center space-x-2.5 w-full sm:w-auto">
-                        <button onclick="addSimulatedPlayer()" class="px-3 py-2.5 bg-navy-900 hover:bg-navy-800 text-gold-400 border border-gold-500/30 rounded-xl text-xs font-semibold transition flex items-center space-x-1.5">
-                            <i class="fa-solid fa-robot"></i>
-                            <span>+ Bot Player</span>
-                        </button>
-
-                        <button id="host-select-game-btn" onclick="openGameSelectionModal()" class="px-5 py-2.5 gold-gradient-bg text-navy-950 font-bold font-serif rounded-xl shadow-lg hover:brightness-110 transition text-xs uppercase tracking-wider flex items-center space-x-2">
-                            <i class="fa-solid fa-gamepad"></i>
-                            <span>Select Game Mode</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Dynamic Teams Grid (4 Kingdoms / Teams) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-
-                    <!-- TEAM 1: CELESTIAL GOLD -->
-                    <div class="glass-panel p-4 rounded-2xl border-t-4 border-gold-500 flex flex-col justify-between min-h-[260px]">
-                        <div>
-                            <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-700/60">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-xl">☀️</span>
-                                    <div>
-                                        <h3 class="font-serif font-bold text-sm text-gold-400">Celestial</h3>
-                                        <p class="text-[9px] text-slate-400 uppercase tracking-wider">Gold Division</p>
-                                    </div>
-                                </div>
-                                <span id="team-count-celestial" class="text-[11px] bg-gold-500/20 text-gold-300 px-2 py-0.5 rounded-full font-bold">0</span>
-                            </div>
-                            <div id="team-list-celestial" class="space-y-2"></div>
-                        </div>
-                        <button onclick="switchTeam('celestial')" class="mt-3 w-full py-1.5 bg-navy-900 hover:bg-gold-500/20 text-gold-300 border border-gold-500/30 rounded-lg text-xs font-semibold transition">
-                            Join Celestial
-                        </button>
-                    </div>
-
-                    <!-- TEAM 2: TERRESTRIAL ROYAL BLUE -->
-                    <div class="glass-panel p-4 rounded-2xl border-t-4 border-royal-500 flex flex-col justify-between min-h-[260px]">
-                        <div>
-                            <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-700/60">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-xl">🌙</span>
-                                    <div>
-                                        <h3 class="font-serif font-bold text-sm text-blue-400">Terrestrial</h3>
-                                        <p class="text-[9px] text-slate-400 uppercase tracking-wider">Royal Division</p>
-                                    </div>
-                                </div>
-                                <span id="team-count-terrestrial" class="text-[11px] bg-royal-500/20 text-blue-300 px-2 py-0.5 rounded-full font-bold">0</span>
-                            </div>
-                            <div id="team-list-terrestrial" class="space-y-2"></div>
-                        </div>
-                        <button onclick="switchTeam('terrestrial')" class="mt-3 w-full py-1.5 bg-navy-900 hover:bg-royal-500/20 text-blue-300 border border-blue-500/30 rounded-lg text-xs font-semibold transition">
-                            Join Terrestrial
-                        </button>
-                    </div>
-
-                    <!-- TEAM 3: TELESTIAL EMERALD -->
-                    <div class="glass-panel p-4 rounded-2xl border-t-4 border-emerald-500 flex flex-col justify-between min-h-[260px]">
-                        <div>
-                            <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-700/60">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-xl">⭐</span>
-                                    <div>
-                                        <h3 class="font-serif font-bold text-sm text-emerald-400">Telestial</h3>
-                                        <p class="text-[9px] text-slate-400 uppercase tracking-wider">Emerald Division</p>
-                                    </div>
-                                </div>
-                                <span id="team-count-telestial" class="text-[11px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">0</span>
-                            </div>
-                            <div id="team-list-telestial" class="space-y-2"></div>
-                        </div>
-                        <button onclick="switchTeam('telestial')" class="mt-3 w-full py-1.5 bg-navy-900 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-lg text-xs font-semibold transition">
-                            Join Telestial
-                        </button>
-                    </div>
-
-                    <!-- TEAM 4: SAPPHIRE ZION -->
-                    <div class="glass-panel p-4 rounded-2xl border-t-4 border-sapphire-500 flex flex-col justify-between min-h-[260px]">
-                        <div>
-                            <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-700/60">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-xl">🏛️</span>
-                                    <div>
-                                        <h3 class="font-serif font-bold text-sm text-sky-400">Zion Guards</h3>
-                                        <p class="text-[9px] text-slate-400 uppercase tracking-wider">Sapphire Division</p>
-                                    </div>
-                                </div>
-                                <span id="team-count-sapphire" class="text-[11px] bg-sapphire-500/20 text-sky-300 px-2 py-0.5 rounded-full font-bold">0</span>
-                            </div>
-                            <div id="team-list-sapphire" class="space-y-2"></div>
-                        </div>
-                        <button onclick="switchTeam('sapphire')" class="mt-3 w-full py-1.5 bg-navy-900 hover:bg-sapphire-500/20 text-sky-300 border border-sapphire-500/30 rounded-lg text-xs font-semibold transition">
-                            Join Zion Guards
-                        </button>
-                    </div>
-
-                </div>
-            </section>
-
-            <!-- ================= 5. GAME SELECTION MODAL ================= -->
-            <div id="game-modal" class="hidden fixed inset-0 bg-navy-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-                <div class="glass-panel-gold max-w-2xl w-full p-6 md:p-8 rounded-3xl shadow-2xl space-y-6 relative border border-gold-500/40">
-                    <button onclick="closeGameSelectionModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2">
-                        <i class="fa-solid fa-xmark text-lg"></i>
-                    </button>
-
-                    <div>
-                        <span class="text-xs font-semibold text-gold-400 uppercase tracking-widest">Select Room Game Mode</span>
-                        <h2 class="font-serif text-2xl md:text-3xl font-extrabold gold-gradient-text">Choose Scripture Quest Challenge</h2>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                        <!-- Game 1 -->
-                        <div onclick="selectGameMode('blitz')" class="p-4 bg-navy-900/90 border border-gold-500/30 hover:border-gold-400 rounded-2xl cursor-pointer transition flex flex-col justify-between space-y-3 group hover:scale-[1.02]">
-                            <div>
-                                <div class="w-10 h-10 rounded-xl bg-gold-500/20 text-gold-300 flex items-center justify-center text-lg mb-2">
-                                    ⚡
-                                </div>
-                                <h4 class="font-serif font-bold text-slate-100 group-hover:text-gold-300 text-sm">Doctrinal Mastery Speed Blitz</h4>
-                                <p class="text-[11px] text-slate-400 leading-snug mt-1">Fast-paced reference matching with streak multipliers.</p>
-                            </div>
-                            <span class="text-[10px] text-gold-400 font-semibold tracking-wider uppercase">Launch Mode →</span>
-                        </div>
-
-                        <!-- Game 2 -->
-                        <div onclick="selectGameMode('scramble')" class="p-4 bg-navy-900/90 border border-gold-500/30 hover:border-gold-400 rounded-2xl cursor-pointer transition flex flex-col justify-between space-y-3 group hover:scale-[1.02]">
-                            <div>
-                                <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-300 flex items-center justify-center text-lg mb-2">
-                                    🧩
-                                </div>
-                                <h4 class="font-serif font-bold text-slate-100 group-hover:text-gold-300 text-sm">Scripture Word Scramble & Fill</h4>
-                                <p class="text-[11px] text-slate-400 leading-snug mt-1">Unscramble key scripture words to complete famous passages.</p>
-                            </div>
-                            <span class="text-[10px] text-gold-400 font-semibold tracking-wider uppercase">Launch Mode →</span>
-                        </div>
-
-                        <!-- Game 3 -->
-                        <div onclick="selectGameMode('timeline')" class="p-4 bg-navy-900/90 border border-gold-500/30 hover:border-gold-400 rounded-2xl cursor-pointer transition flex flex-col justify-between space-y-3 group hover:scale-[1.02]">
-                            <div>
-                                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-lg mb-2">
-                                    ⏳
-                                </div>
-                                <h4 class="font-serif font-bold text-slate-100 group-hover:text-gold-300 text-sm">Church History & Chronology Quest</h4>
-                                <p class="text-[11px] text-slate-400 leading-snug mt-1">Order historical LDS events and scripture visions sequentially.</p>
-                            </div>
-                            <span class="text-[10px] text-gold-400 font-semibold tracking-wider uppercase">Launch Mode →</span>
-                        </div>
-
-                        <!-- Game 4 -->
-                        <div onclick="selectGameMode('wordle')" class="p-4 bg-navy-900/90 border border-gold-500/30 hover:border-gold-400 rounded-2xl cursor-pointer transition flex flex-col justify-between space-y-3 group hover:scale-[1.02]">
-                            <div>
-                                <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-300 flex items-center justify-center text-lg mb-2">
-                                    📜
-                                </div>
-                                <h4 class="font-serif font-bold text-slate-100 group-hover:text-gold-300 text-sm">Gospel Wordle Decoder</h4>
-                                <p class="text-[11px] text-slate-400 leading-snug mt-1">Cooperative 5-letter scriptural mystery word solver.</p>
-                            </div>
-                            <span class="text-[10px] text-gold-400 font-semibold tracking-wider uppercase">Launch Mode →</span>
-                        </div>
-
-                    </div>
-                </div>
+          <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="p-2.5 rounded-xl bg-blue-500/10 text-blue-400"><i data-lucide="file-type" class="w-5 h-5"></i></div>
+              <h4 class="font-bold text-slate-100">Scripture Word Scramble & Fill</h4>
             </div>
+            <p class="text-xs text-slate-400">Unscramble key scriptural words and fill in missing doctrinal verse blanks as a team.</p>
+          </div>
 
-            <!-- ================= 6. GAMEPLAY ENGINE AREA ================= -->
-            <section id="game-screen" class="hidden w-full max-w-4xl mx-auto space-y-5">
+          <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400"><i data-lucide="clock" class="w-5 h-5"></i></div>
+              <h4 class="font-bold text-slate-100">Church History Chronology</h4>
+            </div>
+            <p class="text-xs text-slate-400">Order key LDS restoration events and scripture visions in correct chronological timeline.</p>
+          </div>
 
-                <!-- LIVE SCORES HEADER BAR -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div class="glass-panel p-2.5 rounded-xl border-l-4 border-gold-500 text-center">
-                        <span class="text-[10px] text-gold-400 uppercase font-bold">Celestial</span>
-                        <p id="score-celestial" class="text-xl font-black font-serif">0</p>
-                    </div>
-                    <div class="glass-panel p-2.5 rounded-xl border-l-4 border-royal-500 text-center">
-                        <span class="text-[10px] text-blue-400 uppercase font-bold">Terrestrial</span>
-                        <p id="score-terrestrial" class="text-xl font-black font-serif">0</p>
-                    </div>
-                    <div class="glass-panel p-2.5 rounded-xl border-l-4 border-emerald-500 text-center">
-                        <span class="text-[10px] text-emerald-400 uppercase font-bold">Telestial</span>
-                        <p id="score-telestial" class="text-xl font-black font-serif">0</p>
-                    </div>
-                    <div class="glass-panel p-2.5 rounded-xl border-l-4 border-sapphire-500 text-center">
-                        <span class="text-[10px] text-sky-400 uppercase font-bold">Zion Guards</span>
-                        <p id="score-sapphire" class="text-xl font-black font-serif">0</p>
-                    </div>
-                </div>
+          <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="p-2.5 rounded-xl bg-purple-500/10 text-purple-400"><i data-lucide="grid" class="w-5 h-5"></i></div>
+              <h4 class="font-bold text-slate-100">Gospel Wordle Decoder</h4>
+            </div>
+            <p class="text-xs text-slate-400">Collaborative 5-letter scriptural word guesser. Uncover sacred names and gospel concepts.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-                <!-- ACTIVE GAME PANEL -->
-                <div class="glass-panel-gold p-6 md:p-8 rounded-3xl shadow-2xl relative min-h-[380px] flex flex-col justify-between">
+    <!-- 4. LOBBY SCREEN -->
+    <section id="screen-lobby" class="hidden w-full max-w-5xl space-y-6">
+      <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-900/90 border border-gold-500/30 p-6 rounded-3xl">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs uppercase tracking-widest text-gold-400 font-bold">LIVE SERVER LOBBY</span>
+            <span id="host-tag" class="hidden bg-gold-500/20 border border-gold-500/40 text-gold-300 text-[10px] font-bold px-2 py-0.5 rounded-full">YOU ARE HOST</span>
+          </div>
+          <h2 class="font-cinzel text-2xl font-bold text-slate-100 flex items-center gap-3">
+            ROOM CODE: <span id="lobby-code" class="text-gold-400 font-mono tracking-widest">------</span>
+          </h2>
+        </div>
 
-                    <!-- Top Info Status Bar -->
-                    <div class="flex items-center justify-between pb-3 border-b border-gold-500/20 text-xs">
-                        <span id="game-title-badge" class="bg-navy-900/90 text-gold-400 px-3 py-1 rounded-full font-bold uppercase tracking-wider border border-gold-500/30">
-                            Game Mode
-                        </span>
-                        <div class="flex items-center space-x-2 font-mono text-slate-200">
-                            <i class="fa-regular fa-clock text-gold-400"></i>
-                            <span>Time: <strong id="game-timer" class="text-gold-300 text-sm">25s</strong></span>
-                        </div>
-                        <span id="game-round-tracker" class="text-slate-400 font-mono">Round 1/5</span>
-                    </div>
+        <div class="flex items-center gap-3">
+          <button onclick="leaveRoom()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-semibold text-slate-300 flex items-center gap-2">
+            <i data-lucide="log-out" class="w-4 h-4"></i> LEAVE ROOM
+          </button>
+          <button id="btn-start-game" onclick="startGame()" class="hidden px-6 py-2.5 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 text-slate-950 font-bold rounded-xl text-xs font-cinzel tracking-wider flex items-center gap-2 shadow-lg">
+            <i data-lucide="play" class="w-4 h-4 fill-current"></i> START GAME FOR ALL
+          </button>
+        </div>
+      </div>
 
-                    <!-- DYNAMIC GAME CONTAINER -->
-                    <div id="active-game-container" class="my-6 my-auto">
-                        <!-- Rendered dynamically by active game mode JS -->
-                    </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- GAME MODE SELECTOR / CONFIG (FOR HOST) -->
+        <div class="lg:col-span-1 glass-card p-6 rounded-3xl space-y-4">
+          <h3 class="font-cinzel font-bold text-slate-200 text-sm flex items-center gap-2">
+            <i data-lucide="sliders" class="w-4 h-4 text-gold-400"></i> GAME MODE CONFIG
+          </h3>
 
-                    <!-- Bottom Action Feedback -->
-                    <div id="game-feedback-box" class="mt-4 pt-3 border-t border-gold-500/20 text-center text-xs text-gold-300 font-semibold min-h-[28px]">
-                        <!-- Live turn or outcome message -->
-                    </div>
-                </div>
+          <div class="space-y-2">
+            <label class="block text-xs font-semibold text-slate-400 uppercase">Selected Mode</label>
+            <select id="select-game-mode" onchange="updateSelectedGameMode()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-gold-400">
+              <option value="speed-blitz">⚡ Doctrinal Mastery Speed Blitz</option>
+              <option value="word-scramble">🧩 Scripture Word Scramble</option>
+              <option value="history-timeline">⏳ Church History Chronology</option>
+              <option value="gospel-wordle">🔤 Gospel Wordle Decoder</option>
+            </select>
+          </div>
 
-                <!-- LIVE ACTIVITY FEED -->
-                <div class="glass-panel p-3.5 rounded-2xl text-xs font-mono">
-                    <p class="text-[10px] uppercase font-bold text-gold-400 mb-1">⚡ Live Multiplayer Feed</p>
-                    <div id="game-activity-feed" class="space-y-1 max-h-20 overflow-y-auto text-slate-300">
-                        <p class="text-slate-500 italic">Game session initialized...</p>
-                    </div>
-                </div>
+          <div class="p-4 bg-slate-950/60 rounded-2xl border border-slate-800 space-y-2">
+            <p id="mode-desc-title" class="font-bold text-xs text-gold-400">Doctrinal Mastery Speed Blitz</p>
+            <p id="mode-desc-body" class="text-[11px] text-slate-400 leading-relaxed">Score team points by matching Scripture mastery passages to their correct references before time expires!</p>
+          </div>
 
-            </section>
+          <div class="pt-2">
+            <button id="btn-add-bot" onclick="addBotPlayer()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-300 font-semibold flex items-center justify-center gap-2">
+              <i data-lucide="bot" class="w-4 h-4 text-gold-400"></i> ADD TEST BOT PLAYER
+            </button>
+          </div>
+        </div>
 
-            <!-- ================= 7. VICTORY & RESULTS ================= -->
-            <section id="victory-screen" class="hidden w-full max-w-2xl mx-auto glass-panel-gold p-8 rounded-3xl text-center space-y-6 shadow-2xl">
-                <div class="w-24 h-24 rounded-full bg-gold-500/20 border-2 border-gold-400 flex items-center justify-center text-gold-400 text-5xl mx-auto shadow-2xl animate-float">
-                    🏆
-                </div>
+        <!-- TEAMS LIST -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-cinzel font-bold text-slate-200 text-sm flex items-center gap-2">
+              <i data-lucide="shield" class="w-4 h-4 text-gold-400"></i> TEAM ROSTERS & DIVISIONS
+            </h3>
+            <span class="text-xs text-slate-400">Select a team below to switch sides</span>
+          </div>
 
-                <div>
-                    <p class="text-xs uppercase tracking-widest text-gold-400 font-bold mb-1">Match Complete</p>
-                    <h2 id="victorious-team-name" class="font-serif text-3xl md:text-4xl font-black gold-gradient-text">
-                        CELESTIAL DIVISION VICTORIOUS!
-                    </h2>
-                    <p class="text-slate-300 text-xs md:text-sm mt-2 max-w-md mx-auto">
-                        "By this shall all men know that ye are my disciples..."
-                    </p>
-                </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="team-containers">
+            <!-- TEAMS INJECTED DYNAMICALLY -->
+          </div>
+        </div>
+      </div>
+    </section>
 
-                <!-- Final Team Scores -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 py-4 border-y border-gold-500/20">
-                    <div class="p-3 bg-navy-900/80 rounded-xl border border-gold-500/30">
-                        <p class="text-[10px] text-gold-400 font-bold uppercase">Celestial</p>
-                        <p id="final-celestial" class="text-xl font-bold font-serif">0</p>
-                    </div>
-                    <div class="p-3 bg-navy-900/80 rounded-xl border border-blue-500/30">
-                        <p class="text-[10px] text-blue-400 font-bold uppercase">Terrestrial</p>
-                        <p id="final-terrestrial" class="text-xl font-bold font-serif">0</p>
-                    </div>
-                    <div class="p-3 bg-navy-900/80 rounded-xl border border-emerald-500/30">
-                        <p class="text-[10px] text-emerald-400 font-bold uppercase">Telestial</p>
-                        <p id="final-telestial" class="text-xl font-bold font-serif">0</p>
-                    </div>
-                    <div class="p-3 bg-navy-900/80 rounded-xl border border-sky-500/30">
-                        <p class="text-[10px] text-sky-400 font-bold uppercase">Zion Guards</p>
-                        <p id="final-sapphire" class="text-xl font-bold font-serif">0</p>
-                    </div>
-                </div>
+    <!-- 5. ACTIVE GAME ENGINE SCREEN -->
+    <section id="screen-game" class="hidden w-full max-w-4xl space-y-6">
+      <div class="bg-slate-900/90 border border-gold-500/30 p-4 md:p-6 rounded-3xl flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl" id="game-mode-icon">⚡</span>
+          <div>
+            <h3 class="font-cinzel font-bold text-slate-100 text-base" id="active-mode-title">Speed Blitz</h3>
+            <p class="text-xs text-slate-400" id="active-mode-subtitle">Question <span id="q-current">1</span> of 5</p>
+          </div>
+        </div>
+        
+        <div class="flex items-center gap-4">
+          <div class="text-right">
+            <p class="text-[10px] uppercase tracking-wider text-slate-400">Time Left</p>
+            <p class="font-mono text-xl font-bold text-gold-400" id="game-timer">20s</p>
+          </div>
+        </div>
+      </div>
 
-                <!-- MVP Medal Card -->
-                <div class="glass-panel p-4 rounded-xl flex items-center justify-between text-left">
-                    <div class="flex items-center space-x-3">
-                        <span id="mvp-avatar-icon" class="text-3xl">🎺</span>
-                        <div>
-                            <p class="text-[10px] uppercase tracking-wider text-gold-400 font-bold">Session MVP Disciple</p>
-                            <p id="mvp-player-name" class="font-serif font-bold text-slate-100">Brother Nephi</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span id="mvp-player-score" class="font-serif font-extrabold text-gold-300 text-lg">+550 pts</span>
-                    </div>
-                </div>
+      <!-- DYNAMIC GAME PLAY CARD -->
+      <div id="game-play-area" class="glass-card p-6 md:p-8 rounded-3xl border border-gold-500/30 min-h-[320px] flex flex-col justify-between">
+        <!-- GAME CONTENT RENDERED VIA JS -->
+      </div>
 
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <button onclick="returnToLobby()" class="flex-1 py-3.5 gold-gradient-bg text-navy-950 font-bold font-serif rounded-xl shadow-lg hover:brightness-110 transition text-xs uppercase tracking-wider">
-                        Return to Room Lobby
-                    </button>
-                    <button onclick="goToScreen('menu-screen')" class="flex-1 py-3.5 bg-navy-900 hover:bg-navy-800 text-slate-200 font-bold border border-gold-500/30 rounded-xl transition text-xs uppercase tracking-wider">
-                        Exit Room
-                    </button>
-                </div>
-            </section>
+      <!-- LIVE SCOREBOARD -->
+      <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
+        <h4 class="text-xs font-bold uppercase text-slate-400 mb-3 flex items-center gap-2">
+          <i data-lucide="trophy" class="w-4 h-4 text-gold-400"></i> LIVE TEAM STANDINGS
+        </h4>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="live-standings">
+          <!-- STANDINGS INJECTED HERE -->
+        </div>
+      </div>
+    </section>
 
-        </main>
-
-        <!-- FOOTER -->
-        <footer class="text-center py-4 text-[11px] text-slate-500 border-t border-slate-800/40 mt-8">
-            <p>Scripture Quest Multi-Game Suite • Designed for LDS Youth, Seminary, & FSY Activities</p>
-        </footer>
-
+    <!-- MODAL: HOST GAME -->
+    <div id="modal-host" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="glass-card max-w-sm w-full p-6 rounded-3xl space-y-4 border border-gold-500/40">
+        <h3 class="font-cinzel font-bold text-xl text-gold-400 text-center">Create Game Server</h3>
+        <p class="text-xs text-slate-400 text-center">Generate a private room code for your group.</p>
+        
+        <div class="space-y-3 pt-2">
+          <button onclick="confirmHostRoom()" class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl font-cinzel tracking-wider">CREATE ROOM NOW</button>
+          <button onclick="hideModals()" class="w-full py-2.5 bg-slate-900 border border-slate-700 text-slate-400 text-xs font-semibold rounded-xl">CANCEL</button>
+        </div>
+      </div>
     </div>
 
-    <!-- SCRIPT ENGINE -->
-    <script>
-        // ================= SACRED AVATARS =================
-        const AVATARS = [
-            { id: 'moroni', name: 'Angel Moroni', icon: '🎺' },
-            { id: 'plates', name: 'Gold Plates', icon: '📜' },
-            { id: 'compass', name: 'Liahona', icon: '🧭' },
-            { id: 'olive', name: 'Olive Branch', icon: '🕊️' },
-            { id: 'temple', name: 'Holy Temple', icon: '🏛️' },
-            { id: 'grove', name: 'Sacred Grove', icon: '🌲' },
-            { id: 'sun', name: 'Celestial Light', icon: '☀️' },
-            { id: 'shield', name: 'Armor of Faith', icon: '🛡️' }
-        ];
+    <!-- MODAL: JOIN GAME -->
+    <div id="modal-join" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="glass-card max-w-sm w-full p-6 rounded-3xl space-y-4 border border-gold-500/40">
+        <h3 class="font-cinzel font-bold text-xl text-gold-400 text-center">Join Private Room</h3>
+        <p class="text-xs text-slate-400 text-center">Enter the 6-character room code provided by host.</p>
+        
+        <div>
+          <input type="text" id="input-room-code" placeholder="e.g. NEPHI7" uppercase class="w-full bg-slate-950 border border-slate-700 focus:border-gold-400 rounded-xl px-4 py-3 text-center font-mono text-lg text-gold-400 font-bold outline-none uppercase tracking-widest" />
+        </div>
 
-        // ================= MULTI-GAME DATA BANKS =================
-        const SPEED_BLITZ_QUESTIONS = [
-            {
-                prompt: "Identify the Key Doctrinal Mastery Scripture",
-                body: '"I will go and do the things which the Lord hath commanded..."',
-                options: ["1 Nephi 3:7", "2 Nephi 2:25", "Mosiah 2:17", "Alma 37:37"],
-                correct: 0
-            },
-            {
-                prompt: "Complete Mosiah 2:17",
-                body: '"When ye are in the service of your fellow beings ye are only in the service of your ________"',
-                options: ["Family", "God", "Church", "Leaders"],
-                correct: 1
-            },
-            {
-                prompt: "Identify D&C 18:10",
-                body: '"Remember the worth of souls is ________ in the sight of God."',
-                options: ["Sacred", "Infinite", "Great", "Eternal"],
-                correct: 2
-            },
-            {
-                prompt: "Identify Moroni 10:4-5",
-                body: '"Ask God, the Eternal Father, in the name of Christ, if these things are not true..."',
-                options: ["Faith in Christ", "Promise of Book of Mormon", "Word of Wisdom", "Word of God"],
-                correct: 1
-            }
-        ];
+        <div class="space-y-2 pt-2">
+          <button onclick="confirmJoinRoom()" class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl font-cinzel tracking-wider">JOIN LOBBY</button>
+          <button onclick="hideModals()" class="w-full py-2.5 bg-slate-900 border border-slate-700 text-slate-400 text-xs font-semibold rounded-xl">CANCEL</button>
+        </div>
+      </div>
+    </div>
 
-        const WORD_SCRAMBLE_DATA = [
-            {
-                reference: "2 Nephi 2:25",
-                scrambledWord: "JOY",
-                hint: "Adam fell that men might be; and men are, that they might have _____.",
-                answer: "JOY"
-            },
-            {
-                reference: "Alma 37:35",
-                scrambledWord: "WISDOM",
-                hint: "O, remember, my son, and learn _____ in thy youth; yea, learn in thy youth to keep the commandments of God.",
-                answer: "WISDOM"
-            },
-            {
-                reference: "Ether 12:27",
-                scrambledWord: "GRACE",
-                hint: "My _____ is sufficient for all men that humble themselves before me.",
-                answer: "GRACE"
-            }
-        ];
+  </main>
 
-        const TIMELINE_DATA = [
-            {
-                title: "Lehi's Vision of the Tree of Life",
-                correctIndex: 1
-            },
-            {
-                title: "First Vision in the Sacred Grove (1820)",
-                correctIndex: 2
-            },
-            {
-                title: "Organization of the Church (1830)",
-                correctIndex: 3
-            },
-            {
-                title: "Pioneers Arrive in Salt Lake Valley (1847)",
-                correctIndex: 4
-            }
-        ];
+  <!-- FOOTER -->
+  <footer class="w-full border-t border-slate-800/80 bg-slate-950 py-3 text-center text-[11px] text-slate-500">
+    Designed for Youth Activities, Seminary, & Institute Fellowship
+  </footer>
 
-        const WORDLE_WORDS = ["FAITH", "GRACE", "NEPHI", "LIGHT", "TITLE"];
+  <!-- APPLICATION LOGIC & FIREBASE INTEGRATION -->
+  <script>
+    // ----------------------------------------------------
+    // 1. FIREBASE INITIALIZATION WITH YOUR KEYS
+    // ----------------------------------------------------
+    const firebaseConfig = {
+      apiKey: "AIzaSyA7e0j5JbdIK7UFB2jEUxNLD3AWKNyznMk",
+      authDomain: "lds-scripture-quest.firebaseapp.com",
+      databaseURL: "https://lds-scripture-quest-default-rtdb.firebaseio.com",
+      projectId: "lds-scripture-quest",
+      storageBucket: "lds-scripture-quest.firebasestorage.app",
+      messagingSenderId: "175073574549",
+      appId: "1:175073574549:web:7d3dcdb1e5e9daa7dca59c",
+      measurementId: "G-6VDDT9DXXZ"
+    };
 
-        // ================= GLOBAL STATE =================
-        let currentUser = {
-            name: '',
-            avatar: AVATARS[0]
-        };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-        let currentRoom = {
-            code: '',
-            isHost: false,
-            hostName: '',
-            players: []
-        };
+    // ----------------------------------------------------
+    // 2. STATE & GAME DATA
+    // ----------------------------------------------------
+    let currentUser = { id: null, name: 'Brother Nephi', avatar: '🛡️' };
+    let currentRoomCode = null;
+    let roomRef = null;
+    let roomData = null;
 
-        let gameState = {
-            activeMode: null, // 'blitz', 'scramble', 'timeline', 'wordle'
-            currentRound: 0,
-            scores: { celestial: 0, terrestrial: 0, telestial: 0, sapphire: 0 },
-            playerScores: {},
-            timer: 25,
-            timerInterval: null,
-            customData: {} // Mode specific runtime state
-        };
+    const TEAMS = [
+      { id: 'Gold', name: 'Celestial Gold', color: 'text-amber-400', border: 'border-amber-500/40', bg: 'bg-amber-500/10' },
+      { id: 'Royal', name: 'Terrestrial Royal', color: 'text-blue-400', border: 'border-blue-500/40', bg: 'bg-blue-500/10' },
+      { id: 'Emerald', name: 'Telestial Emerald', color: 'text-emerald-400', border: 'border-emerald-500/40', bg: 'bg-emerald-500/10' },
+      { id: 'Sapphire', name: 'Zion Guards', color: 'text-purple-400', border: 'border-purple-500/40', bg: 'bg-purple-500/10' }
+    ];
 
-        // ================= INITIALIZATION =================
-        window.onload = function () {
-            renderAvatarSelector();
-            startSplashCountdown();
-        };
+    const GAME_QUESTIONS = {
+      'speed-blitz': [
+        { q: '"I will go and do the things which the Lord hath commanded..."', options: ['1 Nephi 3:7', '2 Nephi 2:25', 'Alma 37:37', 'Mosiah 2:17'], correct: 0 },
+        { q: '"When ye are in the service of your fellow beings ye are only in the service of your God."', options: ['Ether 12:27', 'Mosiah 2:17', 'Alma 7:11-12', 'Moroni 10:4-5'], correct: 1 },
+        { q: '"Adam fell that men might be; and men are, that they might have joy."', options: ['1 Nephi 1:1', '2 Nephi 2:25', 'Helaman 5:12', '3 Nephi 11:10'], correct: 1 }
+      ],
+      'word-scramble': [
+        { scramble: 'E P H I N', prompt: 'Faithful prophet who built the ship across the waters.', answer: 'NEPHI' },
+        { scramble: 'I O N Z', prompt: 'Pure in heart, living in unity and holiness.', answer: 'ZION' }
+      ],
+      'history-timeline': [
+        { q: 'Order these sacred events from earliest (1) to latest (3):', items: ['First Vision in the Sacred Grove', 'Organization of the Church in Fayette', 'Pioneers Enter Salt Lake Valley'], correctOrder: [0, 1, 2] }
+      ],
+      'gospel-wordle': [
+        { word: 'FAITH', hint: 'The first principle of the Gospel.' }
+      ]
+    };
 
-        function startSplashCountdown() {
-            setTimeout(() => {
-                skipSplash();
-            }, 5000);
+    // ----------------------------------------------------
+    // 3. INITIALIZATION & NAVIGATION
+    // ----------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      startSplashTimer();
+      currentUser.id = 'usr_' + Math.random().toString(36).substring(2, 9);
+    });
+
+    function startSplashTimer() {
+      let count = 5;
+      const progressEl = document.getElementById('splash-progress');
+      const countdownEl = document.getElementById('splash-countdown');
+
+      const timer = setInterval(() => {
+        count--;
+        countdownEl.innerText = `${count}s`;
+        progressEl.style.width = `${((5 - count) / 5) * 100}%`;
+
+        if (count <= 0) {
+          clearInterval(timer);
+          showScreen('screen-auth');
+        }
+      }, 1000);
+    }
+
+    function showScreen(screenId) {
+      ['screen-splash', 'screen-auth', 'screen-menu', 'screen-lobby', 'screen-game'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(screenId).classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function selectAvatar(emoji) {
+      currentUser.avatar = emoji;
+      document.querySelectorAll('.avatar-btn').forEach(btn => btn.classList.remove('border-gold-400', 'bg-slate-800'));
+      event.currentTarget.classList.add('border-gold-400', 'bg-slate-800');
+    }
+
+    function saveProfile(e) {
+      e.preventDefault();
+      const input = document.getElementById('input-name').value.trim();
+      if (input) currentUser.name = input;
+
+      document.getElementById('badge-name').innerText = currentUser.name;
+      document.getElementById('badge-avatar').innerText = currentUser.avatar;
+      document.getElementById('user-badge').classList.remove('hidden');
+      document.getElementById('user-badge').classList.add('flex');
+
+      showScreen('screen-menu');
+    }
+
+    function goHome() {
+      if (currentRoomCode) leaveRoom();
+      showScreen('screen-menu');
+    }
+
+    // ----------------------------------------------------
+    // 4. FIREBASE REALTIME MULTIPLAYER LOBBY SYSTEM
+    // ----------------------------------------------------
+    function showHostModal() { document.getElementById('modal-host').classList.remove('hidden'); }
+    function showJoinModal() { document.getElementById('modal-join').classList.remove('hidden'); }
+    function hideModals() {
+      document.getElementById('modal-host').classList.add('hidden');
+      document.getElementById('modal-join').classList.add('hidden');
+    }
+
+    function generateRoomCode() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let code = '';
+      for (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+      return code;
+    }
+
+    function confirmHostRoom() {
+      hideModals();
+      currentRoomCode = generateRoomCode();
+      roomRef = db.ref('rooms/' + currentRoomCode);
+
+      const initialRoomState = {
+        hostId: currentUser.id,
+        selectedGame: 'speed-blitz',
+        status: 'lobby',
+        players: {
+          [currentUser.id]: {
+            id: currentUser.id,
+            name: currentUser.name,
+            avatar: currentUser.avatar,
+            team: 'Gold',
+            isHost: true,
+            score: 0
+          }
+        }
+      };
+
+      roomRef.set(initialRoomState).then(() => {
+        listenToRoom();
+        showScreen('screen-lobby');
+      });
+    }
+
+    function confirmJoinRoom() {
+      const codeInput = document.getElementById('input-room-code').value.trim().toUpperCase();
+      if (!codeInput || codeInput.length !== 6) {
+        alert('Please enter a valid 6-character room code.');
+        return;
+      }
+
+      hideModals();
+      currentRoomCode = codeInput;
+      roomRef = db.ref('rooms/' + currentRoomCode);
+
+      roomRef.once('value', (snapshot) => {
+        if (!snapshot.exists()) {
+          alert('Room code not found. Please check and try again.');
+          return;
         }
 
-        function skipSplash() {
-            goToScreen('auth-screen');
-            document.getElementById('main-header').classList.remove('hidden');
+        // Add player to room
+        const playerRef = db.ref(`rooms/${currentRoomCode}/players/${currentUser.id}`);
+        playerRef.set({
+          id: currentUser.id,
+          name: currentUser.name,
+          avatar: currentUser.avatar,
+          team: 'Royal',
+          isHost: false,
+          score: 0
+        }).then(() => {
+          listenToRoom();
+          showScreen('screen-lobby');
+        });
+      });
+    }
+
+    function listenToRoom() {
+      if (!roomRef) return;
+
+      roomRef.on('value', (snapshot) => {
+        roomData = snapshot.val();
+
+        if (!roomData) {
+          alert('Room has been closed by host.');
+          leaveRoom();
+          return;
         }
 
-        function goToScreen(screenId) {
-            const screens = ['splash-screen', 'auth-screen', 'menu-screen', 'lobby-screen', 'game-screen', 'victory-screen'];
-            screens.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.add('hidden');
-            });
-            const target = document.getElementById(screenId);
-            if (target) target.classList.remove('hidden');
+        // Check if player was kicked
+        if (!roomData.players || !roomData.players[currentUser.id]) {
+          alert('You have been removed from the room.');
+          leaveRoom();
+          return;
         }
 
-        // Avatar Selector
-        function renderAvatarSelector() {
-            const container = document.getElementById('avatar-selector');
-            container.innerHTML = '';
-            AVATARS.forEach((av, idx) => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = `p-2.5 rounded-xl border transition flex flex-col items-center space-y-1 ${idx === 0 ? 'bg-gold-500/20 border-gold-400 text-gold-300' : 'bg-navy-900 border-gold-500/20 text-slate-300 hover:border-gold-500/40'
-                    }`;
-                btn.onclick = () => selectAvatar(av, btn);
-                btn.innerHTML = `
-              <span class="text-xl">${av.icon}</span>
-              <span class="text-[10px] font-semibold truncate w-full text-center">${av.name}</span>
-            `;
-                container.appendChild(btn);
-            });
+        updateLobbyUI();
+
+        if (roomData.status === 'playing') {
+          launchGameEngine();
         }
+      });
+    }
 
-        function selectAvatar(av, element) {
-            currentUser.avatar = av;
-            const allBtns = document.getElementById('avatar-selector').children;
-            Array.from(allBtns).forEach(b => {
-                b.className = 'p-2.5 rounded-xl border transition flex flex-col items-center space-y-1 bg-navy-900 border-gold-500/20 text-slate-300 hover:border-gold-500/40';
-            });
-            element.className = 'p-2.5 rounded-xl border transition flex flex-col items-center space-y-1 bg-gold-500/20 border-gold-400 text-gold-300';
-        }
+    function updateLobbyUI() {
+      document.getElementById('lobby-code').innerText = currentRoomCode;
+      const isHost = roomData.hostId === currentUser.id;
 
-        function handleRegistration(e) {
-            e.preventDefault();
-            const input = document.getElementById('player-name-input');
-            currentUser.name = input.value.trim() || 'Disciple';
+      if (isHost) {
+        document.getElementById('host-tag').classList.remove('hidden');
+        document.getElementById('btn-start-game').classList.remove('hidden');
+        document.getElementById('select-game-mode').disabled = false;
+      } else {
+        document.getElementById('host-tag').classList.add('hidden');
+        document.getElementById('btn-start-game').classList.add('hidden');
+        document.getElementById('select-game-mode').disabled = true;
+      }
 
-            document.getElementById('header-player-name').innerText = currentUser.name;
-            document.getElementById('header-avatar-icon').innerText = currentUser.avatar.icon;
+      document.getElementById('select-game-mode').value = roomData.selectedGame || 'speed-blitz';
 
-            goToScreen('menu-screen');
-        }
+      renderTeamRosters();
+    }
 
-        // ================= ROOM & HOST MANAGEMENT =================
-        function createRoom() {
-            const code = 'ZION' + Math.floor(10 + Math.random() * 90);
-            setupRoom(code, true, currentUser.name);
-        }
+    function renderTeamRosters() {
+      const container = document.getElementById('team-containers');
+      container.innerHTML = '';
 
-        function joinRoom() {
-            const input = document.getElementById('room-code-input').value.trim().toUpperCase();
-            if (!input || input.length < 4) {
-                alert('Please enter a valid 6-character room code!');
-                return;
-            }
-            setupRoom(input, false, 'Leader Host');
-        }
+      const isHost = roomData.hostId === currentUser.id;
+      const players = roomData.players ? Object.values(roomData.players) : [];
 
-        function setupRoom(code, isHost, hostName) {
-            currentRoom.code = code;
-            currentRoom.isHost = isHost;
-            currentRoom.hostName = hostName;
+      TEAMS.forEach(team => {
+        const teamPlayers = players.filter(p => p.team === team.id);
 
-            // Clean slate room start
-            currentRoom.players = [
-                {
-                    id: 'p_self',
-                    name: currentUser.name,
-                    avatar: currentUser.avatar.icon,
-                    team: 'celestial',
-                    isSelf: true
-                }
-            ];
-
-            document.getElementById('display-room-code').innerText = code;
-            document.getElementById('header-room-code').innerText = `Room: ${code}`;
-            document.getElementById('host-name-display').innerText = hostName;
-
-            updateLobbyUI();
-            goToScreen('lobby-screen');
-        }
-
-        function updateLobbyUI() {
-            const teams = ['celestial', 'terrestrial', 'telestial', 'sapphire'];
-
-            teams.forEach(t => {
-                const listEl = document.getElementById(`team-list-${t}`);
-                const countEl = document.getElementById(`team-count-${t}`);
-                listEl.innerHTML = '';
-
-                const members = currentRoom.players.filter(p => p.team === t);
-                countEl.innerText = members.length;
-
-                members.forEach(p => {
-                    const card = document.createElement('div');
-                    card.className = `p-2 rounded-lg border flex items-center justify-between text-xs ${p.isSelf ? 'bg-gold-500/20 border-gold-400 text-gold-200 font-semibold' : 'bg-navy-900 border-slate-700/80 text-slate-200'
-                        }`;
-
-                    card.innerHTML = `
-                <div class="flex items-center space-x-2 truncate">
-                  <span>${p.avatar}</span>
-                  <span class="truncate">${p.name} ${p.isSelf ? '(You)' : ''}</span>
-                </div>
-                ${currentRoom.isHost && !p.isSelf ? `
-                  <button onclick="kickPlayer('${p.id}')" class="text-red-400 hover:text-red-300 px-1 text-xs" title="Kick Player">
-                    <i class="fa-solid fa-user-xmark"></i>
-                  </button>
-                ` : ''}
-              `;
-                    listEl.appendChild(card);
-                });
-            });
-        }
-
-        function switchTeam(teamName) {
-            const selfPlayer = currentRoom.players.find(p => p.isSelf);
-            if (selfPlayer) {
-                selfPlayer.team = teamName;
-                updateLobbyUI();
-            }
-        }
-
-        function kickPlayer(playerId) {
-            currentRoom.players = currentRoom.players.filter(p => p.id !== playerId);
-            updateLobbyUI();
-        }
-
-        function addSimulatedPlayer() {
-            const botNames = ['Elder Alma', 'Sister Abish', 'Brother Enos', 'Sister Sariah', 'Elder Helaman'];
-            const botAvatars = ['📜', '🕊️', '🏹', '👑', '🛡️'];
-            const teams = ['celestial', 'terrestrial', 'telestial', 'sapphire'];
-
-            const randomIdx = Math.floor(Math.random() * botNames.length);
-            const randomTeam = teams[Math.floor(Math.random() * teams.length)];
-
-            currentRoom.players.push({
-                id: 'bot_' + Date.now() + Math.floor(Math.random() * 100),
-                name: botNames[randomIdx] + ' #' + Math.floor(Math.random() * 90 + 10),
-                avatar: botAvatars[randomIdx],
-                team: randomTeam,
-                isSelf: false
-            });
-
-            updateLobbyUI();
-        }
-
-        function copyRoomCode() {
-            navigator.clipboard.writeText(currentRoom.code).then(() => {
-                alert(`Room Code ${currentRoom.code} copied!`);
-            }).catch(() => {
-                document.execCommand('copy');
-            });
-        }
-
-        // ================= GAME SELECTION MODAL =================
-        function openGameSelectionModal() {
-            document.getElementById('game-modal').classList.remove('hidden');
-        }
-
-        function closeGameSelectionModal() {
-            document.getElementById('game-modal').classList.add('hidden');
-        }
-
-        function selectGameMode(mode) {
-            closeGameSelectionModal();
-            initGameSession(mode);
-        }
-
-        // ================= GAME ENGINE CONTROLLER =================
-        function initGameSession(mode) {
-            gameState.activeMode = mode;
-            gameState.currentRound = 0;
-            gameState.scores = { celestial: 0, terrestrial: 0, telestial: 0, sapphire: 0 };
-            gameState.playerScores = {};
-
-            currentRoom.players.forEach(p => {
-                gameState.playerScores[p.id] = { name: p.name, points: 0, avatar: p.avatar, team: p.team };
-            });
-
-            goToScreen('game-screen');
-            loadGameRound();
-        }
-
-        function loadGameRound() {
-            updateScoresBar();
-            const container = document.getElementById('active-game-container');
-            const titleBadge = document.getElementById('game-title-badge');
-            container.innerHTML = '';
-
-            if (gameState.activeMode === 'blitz') {
-                titleBadge.innerText = "Doctrinal Mastery Speed Blitz";
-                renderBlitzRound(container);
-            } else if (gameState.activeMode === 'scramble') {
-                titleBadge.innerText = "Scripture Word Scramble";
-                renderScrambleRound(container);
-            } else if (gameState.activeMode === 'timeline') {
-                titleBadge.innerText = "Church History Chronology Quest";
-                renderTimelineRound(container);
-            } else if (gameState.activeMode === 'wordle') {
-                titleBadge.innerText = "Gospel Wordle Decoder";
-                renderWordleRound(container);
-            }
-
-            startTimer(20, () => {
-                triggerSimulatedTeammatePoints();
-                advanceRound();
-            });
-        }
-
-        // Mode 1: Doctrinal Mastery Speed Blitz
-        function renderBlitzRound(container) {
-            if (gameState.currentRound >= SPEED_BLITZ_QUESTIONS.length) {
-                endGameSession();
-                return;
-            }
-            const q = SPEED_BLITZ_QUESTIONS[gameState.currentRound];
-            document.getElementById('game-round-tracker').innerText = `Round ${gameState.currentRound + 1}/${SPEED_BLITZ_QUESTIONS.length}`;
-
-            container.innerHTML = `
-            <div class="text-center space-y-3">
-              <p class="text-xs uppercase text-gold-400 font-bold tracking-wider">${q.prompt}</p>
-              <h3 class="font-serif text-xl md:text-2xl font-bold text-slate-100">${q.body}</h3>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
-                ${q.options.map((opt, idx) => `
-                  <button onclick="handleBlitzAnswer(${idx}, ${q.correct})" class="p-3.5 bg-navy-900 border border-gold-500/30 hover:border-gold-400 rounded-xl text-left font-semibold text-sm transition flex items-center space-x-3">
-                    <span class="w-6 h-6 rounded bg-navy-950 text-gold-400 text-xs flex items-center justify-center font-bold">${idx + 1}</span>
-                    <span>${opt}</span>
-                  </button>
-                `).join('')}
-              </div>
+        let playersHTML = teamPlayers.map(p => `
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/80 border border-slate-800">
+            <div class="flex items-center gap-2">
+              <span class="text-base">${p.avatar}</span>
+              <span class="text-xs font-bold text-slate-200">${p.name} ${p.id === currentUser.id ? '(You)' : ''}</span>
+              ${p.isHost ? '<span class="text-[9px] bg-gold-500/20 text-gold-400 font-bold px-1.5 py-0.5 rounded">HOST</span>' : ''}
             </div>
-          `;
+            ${isHost && p.id !== currentUser.id ? `
+              <button onclick="removePlayer('\${p.id}')" class="text-red-400 hover:text-red-300 p-1 text-xs font-bold" title="Kick Player">
+                <i data-lucide="user-x" class="w-4 h-4"></i>
+              </button>
+            ` : ''}
+          </div>
+        `).join('');
+
+        if (teamPlayers.length === 0) {
+          playersHTML = `<p class="text-xs text-slate-500 italic p-2 text-center">No players assigned</p>`;
         }
 
-        function handleBlitzAnswer(chosenIdx, correctIdx) {
-            clearInterval(gameState.timerInterval);
-            const selfPlayer = currentRoom.players.find(p => p.isSelf);
-            if (chosenIdx === correctIdx) {
-                const pts = 100 + gameState.timer * 5;
-                gameState.scores[selfPlayer.team] += pts;
-                gameState.playerScores[selfPlayer.id].points += pts;
-                logActivity(`✨ ${selfPlayer.name} answered correctly (+${pts} pts)!`);
-            } else {
-                logActivity(`❌ ${selfPlayer.name} answered incorrectly.`);
-            }
-            advanceRound();
+        const teamCard = document.createElement('div');
+        teamCard.className = `p-4 rounded-2xl bg-slate-900/80 border ${team.border} space-y-3`;
+        teamCard.innerHTML = `
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-xs ${team.color} uppercase tracking-wider">${team.name}</h4>
+            <button onclick="switchTeam('${team.id}')" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-semibold border border-slate-700">
+              JOIN
+            </button>
+          </div>
+          <div class="space-y-2">${playersHTML}</div>
+        `;
+        container.appendChild(teamCard);
+      });
+
+      lucide.createIcons();
+    }
+
+    function switchTeam(teamId) {
+      if (!currentRoomCode) return;
+      db.ref(`rooms/${currentRoomCode}/players/${currentUser.id}/team`).set(teamId);
+    }
+
+    function removePlayer(playerId) {
+      if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
+      db.ref(`rooms/${currentRoomCode}/players/${playerId}`).remove();
+    }
+
+    function addBotPlayer() {
+      if (!currentRoomCode) return;
+      const botId = 'bot_' + Math.random().toString(36).substring(2, 7);
+      const botNames = ['Elder Helaman', 'Sister Emma', 'Elder Moroni', 'Sister Eliza'];
+      const randomName = botNames[Math.floor(Math.random() * botNames.length)];
+
+      db.ref(`rooms/${currentRoomCode}/players/${botId}`).set({
+        id: botId,
+        name: randomName,
+        avatar: '🤖',
+        team: 'Sapphire',
+        isHost: false,
+        score: 0
+      });
+    }
+
+    function updateSelectedGameMode() {
+      if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
+      const mode = document.getElementById('select-game-mode').value;
+      db.ref(`rooms/${currentRoomCode}/selectedGame`).set(mode);
+    }
+
+    function leaveRoom() {
+      if (roomRef && currentRoomCode) {
+        db.ref(`rooms/${currentRoomCode}/players/${currentUser.id}`).remove();
+        roomRef.off();
+      }
+      currentRoomCode = null;
+      roomRef = null;
+      roomData = null;
+      showScreen('screen-menu');
+    }
+
+    function startGame() {
+      if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
+      db.ref(`rooms/${currentRoomCode}/status`).set('playing');
+    }
+
+    // ----------------------------------------------------
+    // 5. GAME PLAY ENGINE & RENDERING
+    // ----------------------------------------------------
+    function launchGameEngine() {
+      showScreen('screen-game');
+      const gameMode = roomData.selectedGame || 'speed-blitz';
+      
+      document.getElementById('active-mode-title').innerText = gameMode.toUpperCase().replace('-', ' ');
+      renderActiveQuestion(gameMode);
+      renderLiveStandings();
+    }
+
+    function renderActiveQuestion(mode) {
+      const playArea = document.getElementById('game-play-area');
+      playArea.innerHTML = '';
+
+      if (mode === 'speed-blitz') {
+        const q = GAME_QUESTIONS['speed-blitz'][0];
+        playArea.innerHTML = `
+          <div class="text-center space-y-4">
+            <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Match Reference</span>
+            <blockquote class="text-lg md:text-xl italic text-slate-200 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">
+              ${q.q}
+            </blockquote>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
+            ${q.options.map((opt, idx) => `
+              <button onclick="submitAnswer(\${idx === q.correct})" class="w-full py-3.5 px-4 bg-slate-900 hover:bg-gold-500/20 border border-slate-700 hover:border-gold-400 font-semibold rounded-xl text-sm transition text-left flex items-center justify-between">
+                <span>\${opt}</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>
+              </button>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        playArea.innerHTML = `
+          <div class="text-center py-12 space-y-3">
+            <h3 class="text-xl font-bold text-gold-400 font-cinzel">CHALLENGE IN PROGRESS</h3>
+            <p class="text-xs text-slate-400 max-w-sm mx-auto">Work with your team to formulate your response for the active round.</p>
+            <button onclick="submitAnswer(true)" class="mt-4 px-6 py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs">
+              SUBMIT TEAM ANSWER
+            </button>
+          </div>
+        `;
+      }
+
+      lucide.createIcons();
+    }
+
+    function submitAnswer(isCorrect) {
+      if (isCorrect) {
+        alert('✨ Correct! Your team earns 10 points.');
+        if (currentRoomCode) {
+          const currentScore = roomData.players[currentUser.id].score || 0;
+          db.ref(`rooms/${currentRoomCode}/players/${currentUser.id}/score`).set(currentScore + 10);
         }
+      } else {
+        alert('❌ Incorrect. Try again!');
+      }
+    }
 
-        // Mode 2: Word Scramble
-        function renderScrambleRound(container) {
-            if (gameState.currentRound >= WORD_SCRAMBLE_DATA.length) {
-                endGameSession();
-                return;
-            }
-            const item = WORD_SCRAMBLE_DATA[gameState.currentRound];
-            document.getElementById('game-round-tracker').innerText = `Round ${gameState.currentRound + 1}/${WORD_SCRAMBLE_DATA.length}`;
+    function renderLiveStandings() {
+      const container = document.getElementById('live-standings');
+      container.innerHTML = '';
 
-            container.innerHTML = `
-            <div class="text-center space-y-4">
-              <span class="text-xs text-gold-400 font-bold uppercase tracking-wider">${item.reference}</span>
-              <p class="text-slate-200 font-serif text-lg">"${item.hint}"</p>
-              <div class="py-2">
-                <span class="text-2xl font-mono font-black gold-gradient-text tracking-widest bg-navy-900 px-6 py-2 rounded-xl border border-gold-500/40 inline-block">${item.scrambledWord}</span>
-              </div>
-              <div class="max-w-xs mx-auto flex space-x-2">
-                <input type="text" id="scramble-input" uppercase placeholder="Type word..." class="flex-1 bg-navy-900 border border-gold-500/40 rounded-xl px-4 py-2 text-center uppercase font-bold text-slate-100 focus:outline-none focus:border-gold-400">
-                <button onclick="submitScramble('${item.answer}')" class="px-5 py-2 gold-gradient-bg text-navy-950 font-bold rounded-xl text-xs uppercase font-serif">Submit</button>
-              </div>
-            </div>
-          `;
-        }
+      const players = roomData && roomData.players ? Object.values(roomData.players) : [];
 
-        function submitScramble(correctAnswer) {
-            const input = document.getElementById('scramble-input').value.trim().toUpperCase();
-            clearInterval(gameState.timerInterval);
-            const selfPlayer = currentRoom.players.find(p => p.isSelf);
+      TEAMS.forEach(team => {
+        const teamPlayers = players.filter(p => p.team === team.id);
+        const teamScore = teamPlayers.reduce((sum, p) => sum + (p.score || 0), 0);
 
-            if (input === correctAnswer) {
-                const pts = 150;
-                gameState.scores[selfPlayer.team] += pts;
-                gameState.playerScores[selfPlayer.id].points += pts;
-                logActivity(`🧩 ${selfPlayer.name} solved the scripture word unscramble! (+${pts} pts)`);
-            } else {
-                logActivity(`❌ Incorrect guess for word scramble.`);
-            }
-            advanceRound();
-        }
-
-        // Mode 3: Chronology & Timeline
-        function renderTimelineRound(container) {
-            document.getElementById('game-round-tracker').innerText = `Round 1/1 (Timeline)`;
-
-            container.innerHTML = `
-            <div class="space-y-4 text-center">
-              <p class="text-xs text-gold-400 font-bold uppercase tracking-wider">Arrange LDS Historical Events in Chronological Sequence</p>
-              <div class="space-y-2 max-w-md mx-auto" id="timeline-list">
-                ${TIMELINE_DATA.map((ev, idx) => `
-                  <div class="p-3 bg-navy-900 border border-gold-500/30 rounded-xl flex items-center justify-between text-xs font-semibold">
-                    <span>${idx + 1}. ${ev.title}</span>
-                    <span class="text-slate-500 text-[10px]">Step ${ev.correctIndex}</span>
-                  </div>
-                `).join('')}
-              </div>
-              <button onclick="submitTimeline()" class="px-6 py-2.5 gold-gradient-bg text-navy-950 font-bold rounded-xl text-xs uppercase font-serif mt-2">Validate Order</button>
-            </div>
-          `;
-        }
-
-        function submitTimeline() {
-            clearInterval(gameState.timerInterval);
-            const selfPlayer = currentRoom.players.find(p => p.isSelf);
-            const pts = 200;
-            gameState.scores[selfPlayer.team] += pts;
-            gameState.playerScores[selfPlayer.id].points += pts;
-            logActivity(`⏳ ${selfPlayer.name} ordered the timeline correctly! (+${pts} pts)`);
-            endGameSession();
-        }
-
-        // Mode 4: Gospel Wordle Decoder
-        function renderWordleRound(container) {
-            const secret = WORDLE_WORDS[gameState.currentRound % WORDLE_WORDS.length];
-            document.getElementById('game-round-tracker').innerText = `Round ${gameState.currentRound + 1}/3`;
-
-            container.innerHTML = `
-            <div class="text-center space-y-4">
-              <p class="text-xs text-gold-400 font-bold uppercase tracking-wider">Decode 5-Letter Sacred Scripture Word</p>
-              <div class="flex justify-center space-x-2 my-2">
-                <span class="w-10 h-10 rounded-lg bg-navy-900 border border-gold-500/40 text-slate-200 font-bold text-lg flex items-center justify-center">F</span>
-                <span class="w-10 h-10 rounded-lg bg-navy-900 border border-gold-500/40 text-slate-200 font-bold text-lg flex items-center justify-center">A</span>
-                <span class="w-10 h-10 rounded-lg bg-navy-900 border border-gold-500/40 text-slate-200 font-bold text-lg flex items-center justify-center">I</span>
-                <span class="w-10 h-10 rounded-lg bg-navy-900 border border-gold-500/40 text-slate-200 font-bold text-lg flex items-center justify-center">T</span>
-                <span class="w-10 h-10 rounded-lg bg-navy-900 border border-gold-500/40 text-slate-200 font-bold text-lg flex items-center justify-center">H</span>
-              </div>
-              <div class="max-w-xs mx-auto flex space-x-2">
-                <input type="text" id="wordle-input" maxlength="5" uppercase placeholder="5 letters" class="flex-1 bg-navy-900 border border-gold-500/40 rounded-xl px-4 py-2 text-center uppercase font-bold text-slate-100 focus:outline-none focus:border-gold-400">
-                <button onclick="submitWordle('${secret}')" class="px-5 py-2 gold-gradient-bg text-navy-950 font-bold rounded-xl text-xs uppercase font-serif">Decode</button>
-              </div>
-            </div>
-          `;
-        }
-
-        function submitWordle(secret) {
-            const val = document.getElementById('wordle-input').value.trim().toUpperCase();
-            clearInterval(gameState.timerInterval);
-            const selfPlayer = currentRoom.players.find(p => p.isSelf);
-
-            if (val === secret) {
-                const pts = 180;
-                gameState.scores[selfPlayer.team] += pts;
-                gameState.playerScores[selfPlayer.id].points += pts;
-                logActivity(`📜 ${selfPlayer.name} decoded the gospel mystery word! (+${pts} pts)`);
-            } else {
-                logActivity(`❌ Incorrect wordle decode attempt.`);
-            }
-
-            if (gameState.currentRound >= 2) {
-                endGameSession();
-            } else {
-                advanceRound();
-            }
-        }
-
-        // Engine Helper Procedures
-        function startTimer(seconds, onTimeout) {
-            if (gameState.timerInterval) clearInterval(gameState.timerInterval);
-            gameState.timer = seconds;
-            document.getElementById('game-timer').innerText = `${gameState.timer}s`;
-
-            gameState.timerInterval = setInterval(() => {
-                gameState.timer--;
-                document.getElementById('game-timer').innerText = `${gameState.timer}s`;
-
-                if (gameState.timer <= 0) {
-                    clearInterval(gameState.timerInterval);
-                    onTimeout();
-                }
-            }, 1000);
-        }
-
-        function advanceRound() {
-            gameState.currentRound++;
-            setTimeout(() => {
-                loadGameRound();
-            }, 1200);
-        }
-
-        function triggerSimulatedTeammatePoints() {
-            const bots = currentRoom.players.filter(p => !p.isSelf);
-            if (bots.length === 0) return;
-
-            const randomBot = bots[Math.floor(Math.random() * bots.length)];
-            const pts = 100;
-            gameState.scores[randomBot.team] += pts;
-            gameState.playerScores[randomBot.id].points += pts;
-            logActivity(`⚡ ${randomBot.name} scored (+${pts} pts) for Division!`);
-        }
-
-        function updateScoresBar() {
-            document.getElementById('score-celestial').innerText = gameState.scores.celestial;
-            document.getElementById('score-terrestrial').innerText = gameState.scores.terrestrial;
-            document.getElementById('score-telestial').innerText = gameState.scores.telestial;
-            document.getElementById('score-sapphire').innerText = gameState.scores.sapphire;
-        }
-
-        function logActivity(msg) {
-            const feed = document.getElementById('game-activity-feed');
-            const p = document.createElement('p');
-            p.innerText = msg;
-            feed.prepend(p);
-        }
-
-        function endGameSession() {
-            goToScreen('victory-screen');
-
-            // Calculate Winner
-            const scoresArr = Object.entries(gameState.scores);
-            scoresArr.sort((a, b) => b[1] - a[1]);
-            const winningTeamKey = scoresArr[0][0];
-
-            const teamNames = {
-                celestial: 'CELESTIAL DIVISION',
-                terrestrial: 'TERRESTRIAL DIVISION',
-                telestial: 'TELESTIAL DIVISION',
-                sapphire: 'ZION GUARDS DIVISION'
-            };
-
-            document.getElementById('victorious-team-name').innerText = `${teamNames[winningTeamKey]} VICTORIOUS! 🏆`;
-
-            document.getElementById('final-celestial').innerText = gameState.scores.celestial;
-            document.getElementById('final-terrestrial').innerText = gameState.scores.terrestrial;
-            document.getElementById('final-telestial').innerText = gameState.scores.telestial;
-            document.getElementById('final-sapphire').innerText = gameState.scores.sapphire;
-
-            // MVP
-            let mvp = { name: 'Disciple', points: 0, avatar: '🎺' };
-            Object.values(gameState.playerScores).forEach(p => {
-                if (p.points >= mvp.points) mvp = p;
-            });
-
-            document.getElementById('mvp-player-name').innerText = mvp.name;
-            document.getElementById('mvp-avatar-icon').innerText = mvp.avatar;
-            document.getElementById('mvp-player-score').innerText = `+${mvp.points} pts`;
-        }
-
-        function returnToLobby() {
-            goToScreen('lobby-screen');
-        }
-    </script>
+        const card = document.createElement('div');
+        card.className = `p-3 rounded-xl bg-slate-950/80 border ${team.border} text-center`;
+        card.innerHTML = `
+          <p class="text-[10px] font-bold uppercase ${team.color}">${team.name}</p>
+          <p class="text-lg font-bold font-mono text-slate-100">${teamScore} pts</p>
+        `;
+        container.appendChild(card);
+      });
+    }
+  </script>
 </body>
 </html>
