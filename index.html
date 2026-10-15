@@ -334,7 +334,6 @@
       { id: 'Sapphire', name: 'Zion Guards', color: 'text-purple-400', border: 'border-purple-500/40', bg: 'bg-purple-500/10' }
     ];
 
-    // EXPANDED 20-QUESTION POOLS PER GAME MODE
     const MASTER_QUESTIONS = {
       'speed-blitz': [
         { q: '"I will go and do the things which the Lord hath commanded..."', options: ['1 Nephi 3:7', '2 Nephi 2:25', 'Alma 37:37', 'Mosiah 2:17'], correct: 0 },
@@ -351,7 +350,6 @@
         { q: '"The glory of God is intelligence..."', options: ['D&C 93:36', 'D&C 130:22', 'D&C 88:124', 'D&C 121:36'], correct: 0 },
         { q: '"Choose ye this day whom ye will serve..."', options: ['Joshua 24:15', '1 Samuel 16:7', 'Isaiah 58:13-14', 'Malachi 3:8-10'], correct: 0 },
         { q: '"If any of you lack wisdom, let him ask of God..."', options: ['James 1:5-6', 'Hebrews 12:9', '1 Corinthians 6:19-20', 'Galatians 5:22-23'], correct: 0 },
-        { q: '"The divine nature and destiny of young women..."', options: ['D&C 18:10', 'D&C 82:3', 'D&C 4:2', 'D&C 25:12'], correct: 0 },
         { q: '"Feast upon the words of Christ; for behold, the words of Christ will tell you all things what ye should do."', options: ['2 Nephi 32:3', '2 Nephi 31:20', '1 Nephi 8:30', 'Mosiah 2:41'], correct: 0 },
         { q: '"Press forward with a steadfastness in Christ, having a perfect brightness of hope..."', options: ['2 Nephi 31:20', 'Alma 5:14', 'Mosiah 18:8-10', 'Ether 12:4'], correct: 0 },
         { q: '"If ye love me, keep my commandments."', options: ['John 14:15', 'Matthew 22:36-39', 'John 15:13', '1 John 4:19'], correct: 0 },
@@ -376,7 +374,6 @@
         { q: 'Valley of Lehi’s First Camp', prompt: 'U E L E M E L', answer: 'LEMUEL' },
         { q: 'Guide & Compass for Lehi', prompt: 'A N I H O A H A L R', answer: 'LIANHONA' },
         { q: 'Sacred Grove State', prompt: 'K R O Y W E N', answer: 'NEWYORK' },
-        { q: 'Angel who Visited Joseph Smith', prompt: 'I N O R O M', answer: 'MORONI' },
         { q: 'Title of Liberty Captain', prompt: 'I N O R O M', answer: 'MORONI' },
         { q: 'Land of First Inheritance', prompt: 'I H P E N', answer: 'NEPHI' }
       ],
@@ -391,16 +388,11 @@
         { q: 'In which city were the Gold Plates translated mainly?', options: ['Harmony, PA & Fayette, NY', 'Nauvoo, IL', 'Salt Lake City, UT', 'Kirtland, OH'], correct: 0 },
         { q: 'Primary scribe for the translation of the Book of Mormon:', options: ['Oliver Cowdery', 'Martin Harris', 'David Whitmer', 'Hyrum Smith'], correct: 0 },
         { q: 'Where was the Female Relief Society first organized?', options: ['Nauvoo, Illinois', 'Kirtland, Ohio', 'Fayette, New York', 'Independence, Missouri'], correct: 0 },
-        { q: 'Which revelations are compiled in the Doctrine & Covenants?', options: ['Modern Revelations to Prophets', 'Ancient Jaredite Records', 'Paul’s Epistles', 'Ezekiel’s Visions'], correct: 0 },
         { q: 'Year the Gold Plates were delivered to Joseph Smith by Moroni:', options: ['1827', '1820', '1830', '1844'], correct: 0 },
         { q: 'Location of the Carthage Jail where Joseph and Hyrum were martyred:', options: ['Illinois', 'Missouri', 'Ohio', 'New York'], correct: 0 },
         { q: 'Who witnessed the restoration of the Aaronic Priesthood?', options: ['Joseph Smith & Oliver Cowdery', 'The 3 Witnesses', 'Brigham Young', 'Joseph & Hyrum Smith'], correct: 0 },
         { q: 'Heavenly messenger who restored the Aaronic Priesthood:', options: ['John the Baptist', 'Peter, James, & John', 'Elijah', 'Moroni'], correct: 0 },
-        { q: 'Heavenly messengers who restored the Melchizedek Priesthood:', options: ['Peter, James, and John', 'John the Baptist', 'Moses and Elias', 'Gabriel'], correct: 0 },
-        { q: 'City where the Saints built a beautiful city along the Mississippi River:', options: ['Nauvoo', 'Kirtland', 'Far West', 'Winter Quarters'], correct: 0 },
-        { q: 'Location where the Saints suffered severely during winter 1846-1847:', options: ['Winter Quarters, Nebraska', 'Independence, Missouri', 'Pike County', 'Adam-ondi-Ahman'], correct: 0 },
-        { q: 'Which prophet received the revelation on the priesthood for all worthy males in 1978?', options: ['Spencer W. Kimball', 'David O. McKay', 'Gordon B. Hinckley', 'Thomas S. Monson'], correct: 0 },
-        { q: 'Year the Salt Lake Temple was dedicated after 40 years of building:', options: ['1893', '1847', '1877', '1910'], correct: 0 }
+        { q: 'Heavenly messengers who restored the Melchizedek Priesthood:', options: ['Peter, James, and John', 'John the Baptist', 'Moses and Elias', 'Gabriel'], correct: 0 }
       ],
       'gospel-wordle': [
         { q: '5-Letter Gospel Vocabulary', hint: 'First principle of the Gospel.', answer: 'FAITH' },
@@ -413,15 +405,10 @@
         { q: '5-Letter Gospel Vocabulary', hint: 'Opposite of pride, necessary for baptism.', answer: 'MEEK' },
         { q: '5-Letter Gospel Vocabulary', hint: 'Deep spiritual feeling of happiness.', answer: 'JOY' },
         { q: '5-Letter Gospel Vocabulary', hint: 'Prophet who prayed all day and night.', answer: 'ENOS' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Sacred promises made with God.', answer: 'OATHS' },
         { q: '5-Letter Gospel Vocabulary', hint: 'Divine title for God Almighty.', answer: 'LORD' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Elders anointed with holy oil to...', answer: 'BLESS' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Sacred song of praise.', answer: 'HYMN' },
         { q: '5-Letter Gospel Vocabulary', hint: 'Pure in heart living in unity.', answer: 'ZION' },
         { q: '5-Letter Gospel Vocabulary', hint: 'River where Alma baptized Nephites.', answer: 'MORMON' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Brother of Jared built eight...', answer: 'BOATS' },
         { q: '5-Letter Gospel Vocabulary', hint: 'The straight and narrow...', answer: 'PATH' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Day of worship and rest.', answer: 'SABBATH' },
         { q: '5-Letter Gospel Vocabulary', hint: 'Spiritual gift to discern truth.', answer: 'GIFTS' }
       ]
     };
@@ -698,6 +685,23 @@
       showScreen('screen-menu');
     }
 
+    function resetToLobby() {
+      if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
+
+      // Reset all player scores
+      const updates = {};
+      if (roomData.players) {
+        Object.keys(roomData.players).forEach(pId => {
+          updates['rooms/' + currentRoomCode + '/players/' + pId + '/score'] = 0;
+        });
+      }
+      updates['rooms/' + currentRoomCode + '/status'] = 'lobby';
+      updates['rooms/' + currentRoomCode + '/currentQuestionIndex'] = 0;
+      updates['rooms/' + currentRoomCode + '/timer'] = 20;
+
+      db.ref().update(updates);
+    }
+
     function startGame() {
       if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
       db.ref('rooms/' + currentRoomCode).update({
@@ -739,7 +743,7 @@
       }, 1000);
     }
 
-    // 5. GAME ENGINE & INTERACTIVE INPUT FIXES
+    // 5. GAME PLAY ENGINE & INPUT FIX
     function launchGameEngine() {
       showScreen('screen-game');
       const gameMode = roomData.selectedGame || 'speed-blitz';
@@ -794,24 +798,32 @@
             '<div class="text-3xl font-mono font-extrabold tracking-widest text-gold-400 p-4 bg-slate-950/80 rounded-2xl border border-gold-500/30">' +
               qObj.prompt +
             '</div>' +
-            '<div class="max-w-xs mx-auto space-y-3 pt-2">' +
-              '<input type="text" id="input-scramble" placeholder="TYPE UNSCRAMBLED WORD" onkeydown="if(event.key===\'Enter\') submitWordScramble(\'' + qObj.answer + '\')" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-center text-sm font-bold text-slate-100 outline-none uppercase focus:border-gold-400" />' +
-              '<button onclick="submitWordScramble(\'' + qObj.answer + '\')" ' + (hasAnsweredCurrentQ ? 'disabled ' : '') + 'class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs disabled:opacity-50">SUBMIT ANSWER</button>' +
-            '</div>' +
+            '<form onsubmit="handleWordSubmit(event, \'' + qObj.answer + '\')" class="max-w-xs mx-auto space-y-3 pt-2">' +
+              '<input type="text" id="input-answer" autocomplete="off" placeholder="TYPE UNSCRAMBLED WORD" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-center text-sm font-bold text-white outline-none uppercase focus:border-gold-400" />' +
+              '<button type="submit" ' + (hasAnsweredCurrentQ ? 'disabled ' : '') + 'class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs disabled:opacity-50">SUBMIT ANSWER</button>' +
+            '</form>' +
           '</div>';
       } else if (mode === 'gospel-wordle') {
         playArea.innerHTML = 
           '<div class="text-center space-y-4">' +
             '<span class="text-xs font-bold uppercase tracking-widest text-amber-400">' + qObj.q + '</span>' +
             '<p class="text-xs text-slate-300 italic bg-slate-950/60 p-3 rounded-xl border border-slate-800">Hint: ' + qObj.hint + '</p>' +
-            '<div class="max-w-xs mx-auto space-y-3 pt-2">' +
-              '<input type="text" id="input-wordle" maxlength="10" placeholder="5-LETTER WORD" onkeydown="if(event.key===\'Enter\') submitWordle(\'' + qObj.answer + '\')" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-center font-mono text-lg font-bold text-gold-400 outline-none uppercase tracking-widest focus:border-gold-400" />' +
-              '<button onclick="submitWordle(\'' + qObj.answer + '\')" ' + (hasAnsweredCurrentQ ? 'disabled ' : '') + 'class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs disabled:opacity-50">SUBMIT GUESS</button>' +
-            '</div>' +
+            '<form onsubmit="handleWordSubmit(event, \'' + qObj.answer + '\')" class="max-w-xs mx-auto space-y-3 pt-2">' +
+              '<input type="text" id="input-answer" maxlength="10" autocomplete="off" placeholder="5-LETTER WORD" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-center font-mono text-lg font-bold text-gold-400 outline-none uppercase tracking-widest focus:border-gold-400" />' +
+              '<button type="submit" ' + (hasAnsweredCurrentQ ? 'disabled ' : '') + 'class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs disabled:opacity-50">SUBMIT GUESS</button>' +
+            '</form>' +
           '</div>';
       }
 
       lucide.createIcons();
+    }
+
+    function handleWordSubmit(e, correctAnswer) {
+      e.preventDefault();
+      const inputEl = document.getElementById('input-answer');
+      if (!inputEl) return;
+      const guess = inputEl.value.trim().toUpperCase();
+      submitAnswer(guess === correctAnswer);
     }
 
     function submitAnswer(isCorrect) {
@@ -829,20 +841,6 @@
       }
 
       launchGameEngine();
-    }
-
-    function submitWordScramble(correctAnswer) {
-      const inputEl = document.getElementById('input-scramble');
-      if (!inputEl) return;
-      const guess = inputEl.value.trim().toUpperCase();
-      submitAnswer(guess === correctAnswer);
-    }
-
-    function submitWordle(correctAnswer) {
-      const inputEl = document.getElementById('input-wordle');
-      if (!inputEl) return;
-      const guess = inputEl.value.trim().toUpperCase();
-      submitAnswer(guess === correctAnswer);
     }
 
     function renderLiveStandings() {
@@ -868,6 +866,7 @@
       showScreen('screen-game');
       const playArea = document.getElementById('game-play-area');
       const players = roomData && roomData.players ? Object.values(roomData.players) : [];
+      const isHost = roomData.hostId === currentUser.id;
 
       let topTeam = TEAMS[0];
       let maxScore = -1;
@@ -889,7 +888,13 @@
           '<div class="text-xl font-bold font-cinzel ' + topTeam.color + ' p-4 bg-slate-950/80 rounded-2xl border ' + topTeam.border + ' max-w-xs mx-auto">' +
             topTeam.name + ' (' + maxScore + ' pts)' +
           '</div>' +
-          '<button onclick="goHome()" class="mt-4 px-6 py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs font-cinzel tracking-wider">RETURN TO MAIN MENU</button>' +
+          '<div class="flex flex-col sm:flex-row gap-3 justify-center pt-4 max-w-xs mx-auto">' +
+            (isHost ? 
+              '<button onclick="resetToLobby()" class="flex-1 py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs font-cinzel tracking-wider shadow-lg">RETURN TO LOBBY</button>' : 
+              '<p class="text-xs text-slate-400 italic">Waiting for host to return to lobby...</p>'
+            ) +
+            '<button onclick="goHome()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs">MAIN MENU</button>' +
+          '</div>' +
         '</div>';
 
       renderLiveStandings();
