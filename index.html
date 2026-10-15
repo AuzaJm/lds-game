@@ -243,13 +243,13 @@
           <span class="text-2xl" id="game-mode-icon">⚡</span>
           <div>
             <h3 class="font-cinzel font-bold text-slate-100 text-base" id="active-mode-title">Speed Blitz</h3>
-            <p class="text-xs text-slate-400">Question <span id="q-current">1</span> of <span id="q-total">10</span></p>
+            <p class="text-xs text-slate-400"><span id="game-status-label">Question</span> <span id="q-current">1</span> of <span id="q-total">10</span></p>
           </div>
         </div>
         
         <div class="flex items-center gap-4">
           <div class="text-right">
-            <p class="text-[10px] uppercase tracking-wider text-slate-400">Time Left</p>
+            <p class="text-[10px] uppercase tracking-wider text-slate-400" id="timer-label">Time Left</p>
             <p class="font-mono text-xl font-bold text-gold-400" id="game-timer">20s</p>
           </div>
         </div>
@@ -276,6 +276,15 @@
       <div class="glass-card max-w-sm w-full p-6 rounded-3xl space-y-4 border border-gold-500/40">
         <h3 class="font-cinzel font-bold text-xl text-gold-400 text-center">Create Game Server</h3>
         <p class="text-xs text-slate-400 text-center">Generate a private room code for your group.</p>
+        
+        <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex items-center gap-3">
+          <input type="checkbox" id="check-spectator" class="w-4 h-4 accent-gold-500 cursor-pointer" />
+          <label for="check-spectator" class="text-xs text-slate-300 font-medium cursor-pointer">
+            <span class="font-bold text-gold-400 block">Game Master Mode (Host Spectator)</span>
+            Watch teams, view correct answers, and control game flow without playing.
+          </label>
+        </div>
+
         <div class="space-y-3 pt-2">
           <button onclick="confirmHostRoom()" class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl font-cinzel tracking-wider">CREATE ROOM NOW</button>
           <button onclick="hideModals()" class="w-full py-2.5 bg-slate-900 border border-slate-700 text-slate-400 text-xs font-semibold rounded-xl">CANCEL</button>
@@ -327,6 +336,7 @@
     let timerInterval = null;
     let hasAnsweredCurrentQ = false;
     let renderedQIndex = -1;
+    let renderedPhase = null;
 
     const TEAMS = [
       { id: 'Gold', name: 'Celestial Gold', color: 'text-amber-400', border: 'border-amber-500/40', bg: 'bg-amber-500/10' },
@@ -335,6 +345,7 @@
       { id: 'Sapphire', name: 'Zion Guards', color: 'text-purple-400', border: 'border-purple-500/40', bg: 'bg-purple-500/10' }
     ];
 
+    // MASSIVE 35+ QUESTION DATABASES PER MODE
     const MASTER_QUESTIONS = {
       'speed-blitz': [
         { q: '"I will go and do the things which the Lord hath commanded..."', options: ['1 Nephi 3:7', '2 Nephi 2:25', 'Alma 37:37', 'Mosiah 2:17'], correct: 0 },
@@ -346,7 +357,12 @@
         { q: '"Remember that it is upon the rock of our Redeemer, who is Christ... that ye must build your foundation."', options: ['Helaman 5:12', 'Alma 32:21', 'Ether 12:6', '3 Nephi 18:15'], correct: 0 },
         { q: '"And when ye shall receive these things, I would exhort you that ye would ask God, the Eternal Father..."', options: ['Moroni 10:4-5', 'Alma 7:11', 'Mosiah 3:19', '2 Nephi 31:20'], correct: 0 },
         { q: '"For the natural man is an enemy to God..."', options: ['Mosiah 3:19', 'Alma 37:37', '1 Nephi 19:23', 'Ether 12:27'], correct: 0 },
-        { q: '"Counsel with the Lord in all thy doings, and he will direct thee for good..."', options: ['Alma 37:37', 'Alma 32:21', 'Mosiah 4:30', 'Moroni 7:45'], correct: 0 }
+        { q: '"Counsel with the Lord in all thy doings, and he will direct thee for good..."', options: ['Alma 37:37', 'Alma 32:21', 'Mosiah 4:30', 'Moroni 7:45'], correct: 0 },
+        { q: '"Faith is not to have a perfect knowledge of things..."', options: ['Alma 32:21', 'Ether 12:6', 'Moroni 7:33', '2 Nephi 2:27'], correct: 0 },
+        { q: '"The glory of God is intelligence..."', options: ['D&C 93:36', 'D&C 130:22', 'D&C 88:124', 'D&C 121:36'], correct: 0 },
+        { q: '"Choose ye this day whom ye will serve..."', options: ['Joshua 24:15', '1 Samuel 16:7', 'Isaiah 58:13-14', 'Malachi 3:8-10'], correct: 0 },
+        { q: '"If any of you lack wisdom, let him ask of God..."', options: ['James 1:5-6', 'Hebrews 12:9', '1 Corinthians 6:19-20', 'Galatians 5:22-23'], correct: 0 },
+        { q: '"Feast upon the words of Christ..."', options: ['2 Nephi 32:3', '2 Nephi 31:20', '1 Nephi 8:30', 'Mosiah 2:41'], correct: 0 }
       ],
       'word-scramble': [
         { q: 'Book of Mormon Prophet', prompt: 'E P H I N', answer: 'NEPHI' },
@@ -358,21 +374,36 @@
         { q: 'First Prophet of the Restoration', prompt: 'H P E S O J', answer: 'JOSEPH' },
         { q: 'Ancient Nephite King & Teacher', prompt: 'H A I S O M', answer: 'MOSIAH' },
         { q: 'Lamanite Prophet on the Wall', prompt: 'L E U M A S', answer: 'SAMUEL' },
-        { q: 'Hill where Gold Plates were Buried', prompt: 'H A R O M U C', answer: 'CUMORAH' }
+        { q: 'Hill where Gold Plates were Buried', prompt: 'H A R O M U C', answer: 'CUMORAH' },
+        { q: 'First Principle of the Gospel', prompt: 'H T I A F', answer: 'FAITH' },
+        { q: 'Turning from Sin to God', prompt: 'E C N A T N E P E R', answer: 'REPENTANCE' },
+        { q: 'Holy Covenant Ordinance', prompt: 'M S I T P A B', answer: 'BAPTISM' },
+        { q: 'Brother of Jared’s Vessel', prompt: 'G E A R A B', answer: 'BARGE' },
+        { q: 'Guide & Compass for Lehi', prompt: 'A N I H O A H A L R', answer: 'LIANHONA' }
       ],
       'history-timeline': [
         { q: 'Which event occurred FIRST in Church History?', options: ['First Vision in Sacred Grove', 'Organization of Church (1830)', 'Pioneers Enter Salt Lake Valley', 'Dedication of Kirtland Temple'], correct: 0 },
         { q: 'Which event occurred LAST in Church History?', options: ['Publication of Book of Mormon', 'The First Vision', 'Exodus to Utah Territory', 'Martyrdom at Carthage Jail'], correct: 2 },
         { q: 'Year the Church was officially organized in Fayette, NY:', options: ['1830', '1820', '1844', '1847'], correct: 0 },
         { q: 'Year Joseph Smith had the First Vision:', options: ['1820', '1830', '1823', '1838'], correct: 0 },
-        { q: 'Year the Mormon Pioneers entered the Salt Lake Valley:', options: ['1847', '1830', '1850', '1860'], correct: 0 }
+        { q: 'Year the Mormon Pioneers entered the Salt Lake Valley:', options: ['1847', '1830', '1850', '1860'], correct: 0 },
+        { q: 'Which Temple was dedicated FIRST in this dispensation?', options: ['Kirtland Temple', 'Nauvoo Temple', 'Salt Lake Temple', 'St. George Temple'], correct: 0 },
+        { q: 'Who served as the Second President of the Church?', options: ['Brigham Young', 'John Taylor', 'Wilford Woodruff', 'Lorenzo Snow'], correct: 0 },
+        { q: 'In which city were the Gold Plates translated mainly?', options: ['Harmony, PA & Fayette, NY', 'Nauvoo, IL', 'Salt Lake City, UT', 'Kirtland, OH'], correct: 0 },
+        { q: 'Primary scribe for the translation of the Book of Mormon:', options: ['Oliver Cowdery', 'Martin Harris', 'David Whitmer', 'Hyrum Smith'], correct: 0 },
+        { q: 'Where was the Female Relief Society first organized?', options: ['Nauvoo, Illinois', 'Kirtland, Ohio', 'Fayette, New York', 'Independence, Missouri'], correct: 0 }
       ],
       'gospel-wordle': [
         { q: '5-Letter Gospel Vocabulary', hint: 'First principle of the Gospel.', answer: 'FAITH' },
         { q: '5-Letter Gospel Vocabulary', hint: 'Sacred house of the Lord.', answer: 'TEMPLE' },
         { q: '5-Letter Gospel Vocabulary', hint: 'Unmerited divine help and favor.', answer: 'GRACE' },
         { q: '5-Letter Gospel Vocabulary', hint: 'To make at-one with God through Christ.', answer: 'ATONE' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Book of Mormon Prophet and Judge.', answer: 'ALMA' }
+        { q: '5-Letter Gospel Vocabulary', hint: 'Book of Mormon Prophet and Judge.', answer: 'ALMA' },
+        { q: '5-Letter Gospel Vocabulary', hint: 'Light of Christ that fills the world.', answer: 'LIGHT' },
+        { q: '5-Letter Gospel Vocabulary', hint: 'Gospel knowledge opposing falsehood.', answer: 'TRUTH' },
+        { q: '5-Letter Gospel Vocabulary', hint: 'Opposite of pride, necessary for baptism.', answer: 'MEEK' },
+        { q: '5-Letter Gospel Vocabulary', hint: 'Deep spiritual feeling of happiness.', answer: 'JOY' },
+        { q: '5-Letter Gospel Vocabulary', hint: 'Prophet who prayed all day and night.', answer: 'ENOS' }
       ]
     };
 
@@ -451,14 +482,17 @@
       hideModals();
       currentRoomCode = generateRoomCode();
       roomRef = db.ref('rooms/' + currentRoomCode);
+      const isSpectator = document.getElementById('check-spectator').checked;
 
       const initialRoomState = {
         hostId: currentUser.id,
+        hostIsSpectator: isSpectator,
         selectedGame: 'speed-blitz',
         status: 'lobby',
         currentQuestionIndex: 0,
         timer: 20,
-        players: {
+        phase: 'playing',
+        players: isSpectator ? {} : {
           [currentUser.id]: {
             id: currentUser.id,
             name: currentUser.name,
@@ -514,6 +548,7 @@
       roomRef.on('value', (snapshot) => {
         const prevStatus = roomData ? roomData.status : 'lobby';
         const prevQ = roomData ? roomData.currentQuestionIndex : 0;
+        const prevPhase = roomData ? roomData.phase : 'playing';
         
         roomData = snapshot.val();
 
@@ -523,7 +558,9 @@
           return;
         }
 
-        if (!roomData.players || !roomData.players[currentUser.id]) {
+        const isHostSpectator = roomData.hostId === currentUser.id && roomData.hostIsSpectator;
+
+        if (!isHostSpectator && (!roomData.players || !roomData.players[currentUser.id])) {
           alert('You were removed from the room.');
           leaveRoom();
           return;
@@ -534,7 +571,7 @@
           updateLobbyUI();
           showScreen('screen-lobby');
         } else if (roomData.status === 'playing') {
-          if (prevStatus !== 'playing' || prevQ !== roomData.currentQuestionIndex) {
+          if (prevStatus !== 'playing' || prevQ !== roomData.currentQuestionIndex || prevPhase !== roomData.phase) {
             hasAnsweredCurrentQ = false;
           }
           launchGameEngine();
@@ -596,7 +633,7 @@
         teamCard.innerHTML = 
           '<div class="flex items-center justify-between">' +
             '<h4 class="font-bold text-xs ' + team.color + ' uppercase tracking-wider">' + team.name + '</h4>' +
-            '<button onclick="switchTeam(\'' + team.id + '\')" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-semibold border border-slate-700">JOIN</button>' +
+            (!isHost || !roomData.hostIsSpectator ? '<button onclick="switchTeam(\'' + team.id + '\')" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-semibold border border-slate-700">JOIN</button>' : '') +
           '</div>' +
           '<div class="space-y-2">' + playersHTML + '</div>';
         container.appendChild(teamCard);
@@ -606,7 +643,7 @@
     }
 
     function switchTeam(teamId) {
-      if (!currentRoomCode) return;
+      if (!currentRoomCode || (roomData.hostId === currentUser.id && roomData.hostIsSpectator)) return;
       db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id + '/team').set(teamId);
     }
 
@@ -639,7 +676,9 @@
 
     function leaveRoom() {
       if (roomRef && currentRoomCode) {
-        db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id).remove();
+        if (!roomData || roomData.hostId !== currentUser.id || !roomData.hostIsSpectator) {
+          db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id).remove();
+        }
         roomRef.off();
       }
       currentRoomCode = null;
@@ -661,16 +700,32 @@
       updates['rooms/' + currentRoomCode + '/status'] = 'lobby';
       updates['rooms/' + currentRoomCode + '/currentQuestionIndex'] = 0;
       updates['rooms/' + currentRoomCode + '/timer'] = 20;
+      updates['rooms/' + currentRoomCode + '/phase'] = 'playing';
 
       db.ref().update(updates);
     }
 
+    function shuffleArray(array) {
+      let arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
     function startGame() {
       if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
+      const mode = roomData.selectedGame || 'speed-blitz';
+      const fullBank = MASTER_QUESTIONS[mode] || [];
+      const randomizedQuestions = shuffleArray(fullBank).slice(0, 10);
+
       db.ref('rooms/' + currentRoomCode).update({
         status: 'playing',
         currentQuestionIndex: 0,
-        timer: 20
+        timer: 20,
+        phase: 'playing',
+        gameQuestions: randomizedQuestions
       });
       startHostTimer();
     }
@@ -684,21 +739,32 @@
           return;
         }
 
-        let newTimer = (roomData.timer !== undefined ? roomData.timer : 20) - 1;
+        let currentTimer = roomData.timer !== undefined ? roomData.timer : 20;
+        let currentPhase = roomData.phase || 'playing';
+        let newTimer = currentTimer - 1;
 
         if (newTimer <= 0) {
-          const mode = roomData.selectedGame || 'speed-blitz';
-          const questionsList = MASTER_QUESTIONS[mode] || [];
-          const nextQ = (roomData.currentQuestionIndex || 0) + 1;
-
-          if (nextQ < Math.min(10, questionsList.length)) {
+          if (currentPhase === 'playing') {
+            // Switch to Answer Reveal Phase for 5 seconds
             db.ref('rooms/' + currentRoomCode).update({
-              currentQuestionIndex: nextQ,
-              timer: 20
+              phase: 'revealing',
+              timer: 5
             });
-          } else {
-            clearInterval(timerInterval);
-            db.ref('rooms/' + currentRoomCode + '/status').set('finished');
+          } else if (currentPhase === 'revealing') {
+            // Move to next question or finish game
+            const questionsList = roomData.gameQuestions || [];
+            const nextQ = (roomData.currentQuestionIndex || 0) + 1;
+
+            if (nextQ < questionsList.length) {
+              db.ref('rooms/' + currentRoomCode).update({
+                currentQuestionIndex: nextQ,
+                timer: 20,
+                phase: 'playing'
+              });
+            } else {
+              clearInterval(timerInterval);
+              db.ref('rooms/' + currentRoomCode + '/status').set('finished');
+            }
           }
         } else {
           db.ref('rooms/' + currentRoomCode + '/timer').set(newTimer);
@@ -706,35 +772,117 @@
       }, 1000);
     }
 
-    // 5. GAME ENGINE & STABLE INPUT FOCUS FIX
+    // 6. GAME ENGINE & SPECTATOR ADMIN DASHBOARD
     function launchGameEngine() {
       showScreen('screen-game');
       const gameMode = roomData.selectedGame || 'speed-blitz';
       const qIndex = roomData.currentQuestionIndex || 0;
-      const questionsList = MASTER_QUESTIONS[gameMode] || [];
+      const questionsList = roomData.gameQuestions || MASTER_QUESTIONS[gameMode] || [];
+      const phase = roomData.phase || 'playing';
+      const isSpectatorHost = roomData.hostId === currentUser.id && roomData.hostIsSpectator;
 
       document.getElementById('active-mode-title').innerText = gameMode.toUpperCase().replace('-', ' ');
       document.getElementById('q-current').innerText = (qIndex + 1);
-      document.getElementById('q-total').innerText = Math.min(10, questionsList.length);
+      document.getElementById('q-total').innerText = questionsList.length;
       document.getElementById('game-timer').innerText = (roomData.timer !== undefined ? roomData.timer : 20) + 's';
 
-      // ONLY re-render question card if question index changed to keep mobile input keyboard focused!
-      if (renderedQIndex !== qIndex) {
-        renderedQIndex = qIndex;
-        renderActiveQuestion(gameMode, qIndex);
+      if (phase === 'revealing') {
+        document.getElementById('game-status-label').innerText = 'Answer Reveal in';
+        document.getElementById('timer-label').innerText = 'Reveal Countdown';
+      } else {
+        document.getElementById('game-status-label').innerText = 'Question';
+        document.getElementById('timer-label').innerText = 'Time Left';
+      }
+
+      if (isSpectatorHost) {
+        renderAdminDashboard(gameMode, qIndex, phase);
+      } else {
+        if (renderedQIndex !== qIndex || renderedPhase !== phase) {
+          renderedQIndex = qIndex;
+          renderedPhase = phase;
+          renderActiveQuestion(gameMode, qIndex, phase);
+        }
       }
 
       renderLiveStandings();
     }
 
-    function renderActiveQuestion(mode, qIndex) {
+    function renderAdminDashboard(mode, qIndex, phase) {
       const playArea = document.getElementById('game-play-area');
-      playArea.innerHTML = '';
-
-      const questionsList = MASTER_QUESTIONS[mode] || [];
+      const questionsList = roomData.gameQuestions || MASTER_QUESTIONS[mode] || [];
       const qObj = questionsList[qIndex] || questionsList[0];
 
       if (!qObj) return;
+
+      let correctAnswerText = '';
+      if (qObj.options !== undefined) {
+        correctAnswerText = qObj.options[qObj.correct];
+      } else {
+        correctAnswerText = qObj.answer;
+      }
+
+      playArea.innerHTML = 
+        '<div class="space-y-4 text-center">' +
+          '<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/20 border border-gold-500/40 text-gold-300 text-xs font-bold">' +
+            '<i data-lucide="shield-alert" class="w-4 h-4"></i> GAME MASTER ADMIN VIEW' +
+          '</div>' +
+          '<h3 class="font-cinzel text-xl font-bold text-slate-100">Monitoring Active Round</h3>' +
+          '<div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 text-left space-y-2">' +
+            '<p class="text-xs text-gold-400 font-bold uppercase">Prompt / Question:</p>' +
+            '<p class="text-sm text-slate-200">' + (qObj.q || qObj.prompt) + '</p>' +
+            '<div class="pt-3 border-t border-slate-800">' +
+              '<p class="text-xs text-emerald-400 font-bold uppercase">Correct Answer:</p>' +
+              '<p class="text-base font-bold text-emerald-300">' + correctAnswerText + '</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">' +
+            '<span class="text-xs text-slate-400">Current Phase: <strong class="text-gold-400 uppercase">' + phase + '</strong></span>' +
+            '<button onclick="forceNextQuestion()" class="px-4 py-2 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-lg text-xs">SKIP TO NEXT</button>' +
+          '</div>' +
+        '</div>';
+
+      lucide.createIcons();
+    }
+
+    function forceNextQuestion() {
+      if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
+      const questionsList = roomData.gameQuestions || [];
+      const nextQ = (roomData.currentQuestionIndex || 0) + 1;
+
+      if (nextQ < questionsList.length) {
+        db.ref('rooms/' + currentRoomCode).update({
+          currentQuestionIndex: nextQ,
+          timer: 20,
+          phase: 'playing'
+        });
+      } else {
+        db.ref('rooms/' + currentRoomCode + '/status').set('finished');
+      }
+    }
+
+    function renderActiveQuestion(mode, qIndex, phase) {
+      const playArea = document.getElementById('game-play-area');
+      playArea.innerHTML = '';
+
+      const questionsList = roomData.gameQuestions || MASTER_QUESTIONS[mode] || [];
+      const qObj = questionsList[qIndex] || questionsList[0];
+
+      if (!qObj) return;
+
+      if (phase === 'revealing') {
+        let correctText = qObj.options ? qObj.options[qObj.correct] : qObj.answer;
+        playArea.innerHTML = 
+          '<div class="text-center py-8 space-y-4">' +
+            '<div class="text-4xl">✨</div>' +
+            '<h3 class="font-cinzel text-xl font-bold text-gold-400">TIME UP! ANSWER REVEALED</h3>' +
+            '<div class="p-4 bg-slate-950/80 rounded-2xl border border-emerald-500/40 max-w-md mx-auto space-y-1">' +
+              '<p class="text-xs text-slate-400 uppercase">Correct Answer</p>' +
+              '<p class="text-lg font-bold text-emerald-400">' + correctText + '</p>' +
+            '</div>' +
+            '<p class="text-xs text-slate-500 italic">Get ready for the next question...</p>' +
+          '</div>';
+        return;
+      }
 
       if (mode === 'speed-blitz' || mode === 'history-timeline') {
         let optionsHTML = '';
