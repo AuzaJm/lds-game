@@ -1,1018 +1,1080 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Scripture Quest: LDS Team Edition</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Firebase Compatibility SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Scripture Quest: LDS Team Edition</title>
 
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            gold: { 300: '#fde047', 400: '#facc15', 500: '#eab308', 600: '#ca8a04', 700: '#a16207' },
-            celestial: { 800: '#0B192C', 900: '#030712', 950: '#020617' }
-          }
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase Compatibility SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: { 300: '#fde047', 400: '#facc15', 500: '#eab308', 600: '#ca8a04', 700: '#a16207' },
+                        celestial: { 800: '#0B192C', 900: '#030712', 950: '#020617' }
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
+    </script>
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030712; color: #f8fafc; }
-    .font-cinzel { font-family: 'Cinzel', serif; }
-    .glass-card { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(234, 179, 8, 0.2); }
-    .gold-glow { box-shadow: 0 0 25px rgba(234, 179, 8, 0.25); }
-    input { color: #ffffff !important; }
-  </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #030712;
+            color: #f8fafc;
+        }
+
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(234, 179, 8, 0.2);
+        }
+
+        .gold-glow {
+            box-shadow: 0 0 25px rgba(234, 179, 8, 0.25);
+        }
+
+        input {
+            color: #ffffff !important;
+        }
+    </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-gold-500 selection:text-slate-950">
 
-  <!-- TOP BAR -->
-  <header class="w-full border-b border-gold-500/20 bg-slate-950/90 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-slate-950 shadow-md">
-          <i data-lucide="book-open-check" class="w-5 h-5"></i>
-        </div>
-        <div>
-          <h1 class="font-cinzel font-bold text-lg text-gold-400 tracking-wider">SCRIPTURE QUEST</h1>
-          <p class="text-[10px] text-slate-400 tracking-widest uppercase -mt-1">Doctrinal Mastery</p>
-        </div>
-      </div>
-      <div id="user-badge" class="hidden items-center gap-2 bg-slate-900 border border-slate-700/60 rounded-full px-3 py-1 text-xs">
-        <span id="badge-avatar" class="text-base">🛡️</span>
-        <span id="badge-name" class="font-semibold text-slate-200">Guest</span>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN CONTAINER -->
-  <main class="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
-    
-    <!-- 1. SPLASH SCREEN -->
-    <section id="screen-splash" class="w-full max-w-md text-center py-12 flex flex-col items-center justify-center">
-      <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-gold-300 via-gold-500 to-amber-700 flex items-center justify-center text-slate-950 shadow-2xl gold-glow mb-6 transform hover:scale-105 transition-all">
-        <i data-lucide="shield-check" class="w-14 h-14"></i>
-      </div>
-      <h1 class="font-cinzel text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-gold-400 to-amber-500 mb-2">SCRIPTURE QUEST</h1>
-      <p class="text-sm text-slate-400 mb-8 max-w-xs">Interactive Doctrinal Mastery & Gospel Knowledge Multi-Game Suite</p>
-      
-      <div class="w-full max-w-xs bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
-        <p class="text-xs text-slate-400 mb-2">Connecting to Sacred Records...</p>
-        <div class="w-full bg-slate-800 rounded-full h-2 mb-3 overflow-hidden">
-          <div id="splash-progress" class="bg-gradient-to-r from-gold-500 to-amber-400 h-2 rounded-full w-0 transition-all duration-1000"></div>
-        </div>
-        <span id="splash-countdown" class="text-xs font-mono text-gold-400 font-bold">5s</span>
-      </div>
-    </section>
-
-    <!-- 2. GUEST REGISTRATION -->
-    <section id="screen-auth" class="hidden w-full max-w-md">
-      <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border border-gold-500/30">
-        <div class="text-center mb-6">
-          <div class="inline-flex p-3 rounded-2xl bg-gold-500/10 text-gold-400 mb-3 border border-gold-500/20">
-            <i data-lucide="user-plus" class="w-6 h-6"></i>
-          </div>
-          <h2 class="font-cinzel text-2xl font-bold text-slate-100">Player Profile</h2>
-          <p class="text-xs text-slate-400">Enter your name to join the game server</p>
-        </div>
-
-        <form id="form-auth" onsubmit="saveProfile(event)" class="space-y-5">
-          <div>
-            <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Display Name</label>
-            <input type="text" id="input-name" required max="15" placeholder="e.g. Brother Nephi" class="w-full bg-slate-950 border border-slate-700 focus:border-gold-400 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 outline-none transition" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Choose Avatar Emblem</label>
-            <div class="grid grid-cols-5 gap-2">
-              <button type="button" onclick="selectAvatar('🛡️')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center active">🛡️</button>
-              <button type="button" onclick="selectAvatar('📜')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center">📜</button>
-              <button type="button" onclick="selectAvatar('⚔️')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center">⚔️</button>
-              <button type="button" onclick="selectAvatar('👑')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center">👑</button>
-              <button type="button" onclick="selectAvatar('🕊️')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center">🕊️</button>
+    <!-- TOP BAR -->
+    <header class="w-full border-b border-gold-500/20 bg-slate-950/90 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center text-slate-950 shadow-md">
+                    <i data-lucide="book-open-check" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="font-cinzel font-bold text-lg text-gold-400 tracking-wider">SCRIPTURE QUEST</h1>
+                    <p class="text-[10px] text-slate-400 tracking-widest uppercase -mt-1">Doctrinal Mastery</p>
+                </div>
             </div>
-          </div>
-
-          <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl transition shadow-lg font-cinzel tracking-wider flex items-center justify-center gap-2">
-            ENTER SCRIPTURE QUEST <i data-lucide="arrow-right" class="w-4 h-4"></i>
-          </button>
-        </form>
-      </div>
-    </section>
-
-    <!-- 3. MAIN MENU -->
-    <section id="screen-menu" class="hidden w-full max-w-4xl space-y-6">
-      <div class="glass-card p-6 md:p-8 rounded-3xl border border-gold-500/20 text-center relative overflow-hidden">
-        <h2 class="font-cinzel text-2xl md:text-3xl font-extrabold text-gold-400 mb-2">WELCOME TO THE SCRIPTURE SUITE</h2>
-        <p class="text-sm text-slate-300 max-w-xl mx-auto mb-6">Gather your group, join a room, and compete live in team scriptural challenges.</p>
-
-        <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
-          <button onclick="showHostModal()" class="flex-1 py-4 px-6 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-slate-950 font-bold rounded-2xl shadow-xl flex items-center justify-center gap-3 transition">
-            <i data-lucide="crown" class="w-5 h-5"></i>
-            <span>HOST GAME ROOM</span>
-          </button>
-          <button onclick="showJoinModal()" class="flex-1 py-4 px-6 bg-slate-900 hover:bg-slate-800 border border-gold-500/40 text-slate-100 font-bold rounded-2xl shadow-xl flex items-center justify-center gap-3 transition">
-            <i data-lucide="users" class="w-5 h-5 text-gold-400"></i>
-            <span>JOIN PRIVATE ROOM</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- GAME MODES PREVIEW -->
-      <div>
-        <h3 class="font-cinzel text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
-          <i data-lucide="gamepad-2" class="w-5 h-5 text-gold-400"></i> AVAILABLE GAME MODES
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
-            <div class="flex items-center gap-3 mb-2">
-              <div class="p-2.5 rounded-xl bg-amber-500/10 text-amber-400"><i data-lucide="zap" class="w-5 h-5"></i></div>
-              <h4 class="font-bold text-slate-100">Doctrinal Mastery Speed Blitz</h4>
+            <div id="user-badge" class="hidden items-center gap-2 bg-slate-900 border border-slate-700/60 rounded-full px-3 py-1 text-xs">
+                <span id="badge-avatar" class="text-base">🛡️</span>
+                <span id="badge-name" class="font-semibold text-slate-200">Guest</span>
             </div>
-            <p class="text-xs text-slate-400">Fast-paced multiple-choice speed rounds. Match key scriptures from BOM, Bible, D&C to references.</p>
-          </div>
+        </div>
+    </header>
 
-          <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
-            <div class="flex items-center gap-3 mb-2">
-              <div class="p-2.5 rounded-xl bg-blue-500/10 text-blue-400"><i data-lucide="file-type" class="w-5 h-5"></i></div>
-              <h4 class="font-bold text-slate-100">Scripture Word Scramble</h4>
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
+
+        <!-- 1. SPLASH SCREEN -->
+        <section id="screen-splash" class="w-full max-w-md text-center py-12 flex flex-col items-center justify-center">
+            <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-gold-300 via-gold-500 to-amber-700 flex items-center justify-center text-slate-950 shadow-2xl gold-glow mb-6 transform hover:scale-105 transition-all">
+                <i data-lucide="shield-check" class="w-14 h-14"></i>
             </div>
-            <p class="text-xs text-slate-400">Unscramble key scriptural names, cities, and gospel topics with hint definitions.</p>
-          </div>
+            <h1 class="font-cinzel text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-gold-400 to-amber-500 mb-2">SCRIPTURE QUEST</h1>
+            <p class="text-sm text-slate-400 mb-8 max-w-xs">Interactive Doctrinal Mastery & Gospel Knowledge Multi-Game Suite</p>
 
-          <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
-            <div class="flex items-center gap-3 mb-2">
-              <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400"><i data-lucide="clock" class="w-5 h-5"></i></div>
-              <h4 class="font-bold text-slate-100">Church History Chronology</h4>
+            <div class="w-full max-w-xs bg-slate-900/80 border border-slate-800 rounded-2xl p-4">
+                <p class="text-xs text-slate-400 mb-2">Connecting to Sacred Records...</p>
+                <div class="w-full bg-slate-800 rounded-full h-2 mb-3 overflow-hidden">
+                    <div id="splash-progress" class="bg-gradient-to-r from-gold-500 to-amber-400 h-2 rounded-full w-0 transition-all duration-1000"></div>
+                </div>
+                <span id="splash-countdown" class="text-xs font-mono text-gold-400 font-bold">5s</span>
             </div>
-            <p class="text-xs text-slate-400">Identify key restoration milestones, prophetic visions, and timeline sequences.</p>
-          </div>
+        </section>
 
-          <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
-            <div class="flex items-center gap-3 mb-2">
-              <div class="p-2.5 rounded-xl bg-purple-500/10 text-purple-400"><i data-lucide="grid" class="w-5 h-5"></i></div>
-              <h4 class="font-bold text-slate-100">Gospel Wordle Decoder</h4>
+        <!-- 2. GUEST REGISTRATION -->
+        <section id="screen-auth" class="hidden w-full max-w-md">
+            <div class="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border border-gold-500/30">
+                <div class="text-center mb-6">
+                    <div class="inline-flex p-3 rounded-2xl bg-gold-500/10 text-gold-400 mb-3 border border-gold-500/20">
+                        <i data-lucide="user-plus" class="w-6 h-6"></i>
+                    </div>
+                    <h2 class="font-cinzel text-2xl font-bold text-slate-100">Player Profile</h2>
+                    <p class="text-xs text-slate-400">Enter your name to join the game server</p>
+                </div>
+
+                <form id="form-auth" onsubmit="saveProfile(event)" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Display Name</label>
+                        <input type="text" id="input-name" required max="15" placeholder="e.g. Brother Nephi" class="w-full bg-slate-950 border border-slate-700 focus:border-gold-400 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 outline-none transition" />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Choose Avatar Emblem</label>
+                        <div class="grid grid-cols-5 gap-2">
+                            <button type="button" onclick="selectAvatar('🛡️')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center active">🛡️</button>
+                            <button type="button" onclick="selectAvatar('📜')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center">📜</button>
+                            <button type="button" onclick="selectAvatar('⚔️')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center">⚔️</button>
+                            <button type="button" onclick="selectAvatar('👑')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center">👑</button>
+                            <button type="button" onclick="selectAvatar('🕊️')" class="avatar-btn p-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xl text-center">🕊️</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl transition shadow-lg font-cinzel tracking-wider flex items-center justify-center gap-2">
+                        ENTER SCRIPTURE QUEST <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </form>
             </div>
-            <p class="text-xs text-slate-400">5-letter scriptural vocabulary decoder. Uncover sacred terms and gospel concepts.</p>
-          </div>
+        </section>
+
+        <!-- 3. MAIN MENU -->
+        <section id="screen-menu" class="hidden w-full max-w-4xl space-y-6">
+            <div class="glass-card p-6 md:p-8 rounded-3xl border border-gold-500/20 text-center relative overflow-hidden">
+                <h2 class="font-cinzel text-2xl md:text-3xl font-extrabold text-gold-400 mb-2">WELCOME TO THE SCRIPTURE SUITE</h2>
+                <p class="text-sm text-slate-300 max-w-xl mx-auto mb-6">Gather your group, join a room, and compete live in team scriptural challenges.</p>
+
+                <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
+                    <button onclick="showHostModal()" class="flex-1 py-4 px-6 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-slate-950 font-bold rounded-2xl shadow-xl flex items-center justify-center gap-3 transition">
+                        <i data-lucide="crown" class="w-5 h-5"></i>
+                        <span>HOST GAME ROOM</span>
+                    </button>
+                    <button onclick="showJoinModal()" class="flex-1 py-4 px-6 bg-slate-900 hover:bg-slate-800 border border-gold-500/40 text-slate-100 font-bold rounded-2xl shadow-xl flex items-center justify-center gap-3 transition">
+                        <i data-lucide="users" class="w-5 h-5 text-gold-400"></i>
+                        <span>JOIN PRIVATE ROOM</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- GAME MODES PREVIEW -->
+            <div>
+                <h3 class="font-cinzel text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+                    <i data-lucide="gamepad-2" class="w-5 h-5 text-gold-400"></i> AVAILABLE GAME MODES
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2.5 rounded-xl bg-amber-500/10 text-amber-400"><i data-lucide="zap" class="w-5 h-5"></i></div>
+                            <h4 class="font-bold text-slate-100">Doctrinal Mastery Speed Blitz</h4>
+                        </div>
+                        <p class="text-xs text-slate-400">20 fast-paced rounds matching key scriptures from BOM, Old & New Testament, D&C, and PGP to references.</p>
+                    </div>
+
+                    <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2.5 rounded-xl bg-blue-500/10 text-blue-400"><i data-lucide="file-type" class="w-5 h-5"></i></div>
+                            <h4 class="font-bold text-slate-100">Hardcore Scripture Word Scramble</h4>
+                        </div>
+                        <p class="text-xs text-slate-400">20 challenging rounds. Unscramble complex scriptural names, ancient prophets, and gospel doctrines.</p>
+                    </div>
+
+                    <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400"><i data-lucide="clock" class="w-5 h-5"></i></div>
+                            <h4 class="font-bold text-slate-100">Church History Chronology</h4>
+                        </div>
+                        <p class="text-xs text-slate-400">Identify key restoration milestones, prophetic visions, and timeline sequences.</p>
+                    </div>
+
+                    <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2.5 rounded-xl bg-purple-500/10 text-purple-400"><i data-lucide="grid" class="w-5 h-5"></i></div>
+                            <h4 class="font-bold text-slate-100">Gospel Wordle Decoder</h4>
+                        </div>
+                        <p class="text-xs text-slate-400">5-letter scriptural vocabulary decoder. Uncover sacred terms and gospel concepts.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. LOBBY SCREEN -->
+        <section id="screen-lobby" class="hidden w-full max-w-5xl space-y-6">
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-900/90 border border-gold-500/30 p-6 rounded-3xl">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-xs uppercase tracking-widest text-gold-400 font-bold">LIVE SERVER LOBBY</span>
+                        <span id="host-tag" class="hidden bg-gold-500/20 border border-gold-500/40 text-gold-300 text-[10px] font-bold px-2 py-0.5 rounded-full">YOU ARE HOST</span>
+                    </div>
+                    <h2 class="font-cinzel text-2xl font-bold text-slate-100 flex items-center gap-3">
+                        ROOM CODE: <span id="lobby-code" class="text-gold-400 font-mono tracking-widest">------</span>
+                    </h2>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="leaveRoom()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-semibold text-slate-300 flex items-center gap-2">
+                        <i data-lucide="log-out" class="w-4 h-4"></i> LEAVE ROOM
+                    </button>
+                    <button id="btn-start-game" onclick="startGame()" class="hidden px-6 py-2.5 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 text-slate-950 font-bold rounded-xl text-xs font-cinzel tracking-wider flex items-center gap-2 shadow-lg">
+                        <i data-lucide="play" class="w-4 h-4 fill-current"></i> START GAME FOR ALL
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-1 glass-card p-6 rounded-3xl space-y-4">
+                    <h3 class="font-cinzel font-bold text-slate-200 text-sm flex items-center gap-2">
+                        <i data-lucide="sliders" class="w-4 h-4 text-gold-400"></i> GAME MODE CONFIG
+                    </h3>
+
+                    <div class="space-y-2">
+                        <label class="block text-xs font-semibold text-slate-400 uppercase">Selected Mode</label>
+                        <select id="select-game-mode" onchange="updateSelectedGameMode()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-gold-400">
+                            <option value="speed-blitz">⚡ Doctrinal Mastery Speed Blitz (20 Qs)</option>
+                            <option value="word-scramble">🧩 Hardcore Scripture Word Scramble (20 Qs)</option>
+                            <option value="history-timeline">⏳ Church History Chronology</option>
+                            <option value="gospel-wordle">🔤 Gospel Wordle Decoder</option>
+                        </select>
+                    </div>
+
+                    <div class="p-4 bg-slate-950/60 rounded-2xl border border-slate-800 space-y-2">
+                        <p id="mode-desc-title" class="font-bold text-xs text-gold-400">Doctrinal Mastery Speed Blitz</p>
+                        <p id="mode-desc-body" class="text-[11px] text-slate-400 leading-relaxed">Score team points by matching Scripture mastery passages to their correct references before time expires!</p>
+                    </div>
+
+                    <div class="pt-2">
+                        <button id="btn-add-bot" onclick="addBotPlayer()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-300 font-semibold flex items-center justify-center gap-2">
+                            <i data-lucide="bot" class="w-4 h-4 text-gold-400"></i> ADD TEST BOT PLAYER
+                        </button>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-cinzel font-bold text-slate-200 text-sm flex items-center gap-2">
+                            <i data-lucide="shield" class="w-4 h-4 text-gold-400"></i> TEAM ROSTERS & DIVISIONS
+                        </h3>
+                        <span class="text-xs text-slate-400">Select a team below to switch sides</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="team-containers">
+                        <!-- TEAMS INJECTED DYNAMICALLY -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. ACTIVE GAME ENGINE SCREEN -->
+        <section id="screen-game" class="hidden w-full max-w-4xl space-y-6">
+            <div class="bg-slate-900/90 border border-gold-500/30 p-4 md:p-6 rounded-3xl flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl" id="game-mode-icon">⚡</span>
+                    <div>
+                        <h3 class="font-cinzel font-bold text-slate-100 text-base" id="active-mode-title">Speed Blitz</h3>
+                        <p class="text-xs text-slate-400"><span id="game-status-label">Question</span> <span id="q-current">1</span> of <span id="q-total">20</span></p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-[10px] uppercase tracking-wider text-slate-400" id="timer-label">Time Left</p>
+                        <p class="font-mono text-xl font-bold text-gold-400" id="game-timer">20s</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DYNAMIC GAME PLAY CARD -->
+            <div id="game-play-area" class="glass-card p-6 md:p-8 rounded-3xl border border-gold-500/30 min-h-[320px] flex flex-col justify-between">
+                <!-- GAME CONTENT RENDERED VIA JS -->
+            </div>
+
+            <!-- LIVE SCOREBOARD -->
+            <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
+                <h4 class="text-xs font-bold uppercase text-slate-400 mb-3 flex items-center gap-2">
+                    <i data-lucide="trophy" class="w-4 h-4 text-gold-400"></i> LIVE TEAM STANDINGS
+                </h4>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="live-standings">
+                    <!-- STANDINGS INJECTED HERE -->
+                </div>
+            </div>
+        </section>
+
+        <!-- MODALS -->
+        <div id="modal-host" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="glass-card max-w-sm w-full p-6 rounded-3xl space-y-4 border border-gold-500/40">
+                <h3 class="font-cinzel font-bold text-xl text-gold-400 text-center">Create Game Server</h3>
+                <p class="text-xs text-slate-400 text-center">Generate a private room code for your group.</p>
+
+                <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex items-center gap-3">
+                    <input type="checkbox" id="check-spectator" class="w-4 h-4 accent-gold-500 cursor-pointer" />
+                    <label for="check-spectator" class="text-xs text-slate-300 font-medium cursor-pointer">
+                        <span class="font-bold text-gold-400 block">Game Master Mode (Host Spectator)</span>
+                        Watch teams, view correct answers, and control game flow without playing.
+                    </label>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <button onclick="confirmHostRoom()" class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl font-cinzel tracking-wider">CREATE ROOM NOW</button>
+                    <button onclick="hideModals()" class="w-full py-2.5 bg-slate-900 border border-slate-700 text-slate-400 text-xs font-semibold rounded-xl">CANCEL</button>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
 
-    <!-- 4. LOBBY SCREEN -->
-    <section id="screen-lobby" class="hidden w-full max-w-5xl space-y-6">
-      <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-900/90 border border-gold-500/30 p-6 rounded-3xl">
-        <div>
-          <div class="flex items-center gap-2 mb-1">
-            <span class="text-xs uppercase tracking-widest text-gold-400 font-bold">LIVE SERVER LOBBY</span>
-            <span id="host-tag" class="hidden bg-gold-500/20 border border-gold-500/40 text-gold-300 text-[10px] font-bold px-2 py-0.5 rounded-full">YOU ARE HOST</span>
-          </div>
-          <h2 class="font-cinzel text-2xl font-bold text-slate-100 flex items-center gap-3">
-            ROOM CODE: <span id="lobby-code" class="text-gold-400 font-mono tracking-widest">------</span>
-          </h2>
+        <div id="modal-join" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="glass-card max-w-sm w-full p-6 rounded-3xl space-y-4 border border-gold-500/40">
+                <h3 class="font-cinzel font-bold text-xl text-gold-400 text-center">Join Private Room</h3>
+                <p class="text-xs text-slate-400 text-center">Enter the 6-character room code provided by host.</p>
+                <div>
+                    <input type="text" id="input-room-code" placeholder="e.g. NEPHI7" class="w-full bg-slate-950 border border-slate-700 focus:border-gold-400 rounded-xl px-4 py-3 text-center font-mono text-lg text-gold-400 font-bold outline-none uppercase tracking-widest" />
+                </div>
+                <div class="space-y-2 pt-2">
+                    <button onclick="confirmJoinRoom()" class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl font-cinzel tracking-wider">JOIN LOBBY</button>
+                    <button onclick="hideModals()" class="w-full py-2.5 bg-slate-900 border border-slate-700 text-slate-400 text-xs font-semibold rounded-xl">CANCEL</button>
+                </div>
+            </div>
         </div>
 
-        <div class="flex items-center gap-3">
-          <button onclick="leaveRoom()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-semibold text-slate-300 flex items-center gap-2">
-            <i data-lucide="log-out" class="w-4 h-4"></i> LEAVE ROOM
-          </button>
-          <button id="btn-start-game" onclick="startGame()" class="hidden px-6 py-2.5 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 text-slate-950 font-bold rounded-xl text-xs font-cinzel tracking-wider flex items-center gap-2 shadow-lg">
-            <i data-lucide="play" class="w-4 h-4 fill-current"></i> START GAME FOR ALL
-          </button>
-        </div>
-      </div>
+    </main>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-1 glass-card p-6 rounded-3xl space-y-4">
-          <h3 class="font-cinzel font-bold text-slate-200 text-sm flex items-center gap-2">
-            <i data-lucide="sliders" class="w-4 h-4 text-gold-400"></i> GAME MODE CONFIG
-          </h3>
+    <footer class="w-full border-t border-slate-800/80 bg-slate-950 py-3 text-center text-[11px] text-slate-500">
+        Designed for Youth Activities, Seminary, & Institute Fellowship
+    </footer>
 
-          <div class="space-y-2">
-            <label class="block text-xs font-semibold text-slate-400 uppercase">Selected Mode</label>
-            <select id="select-game-mode" onchange="updateSelectedGameMode()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-gold-400">
-              <option value="speed-blitz">⚡ Doctrinal Mastery Speed Blitz</option>
-              <option value="word-scramble">🧩 Scripture Word Scramble</option>
-              <option value="history-timeline">⏳ Church History Chronology</option>
-              <option value="gospel-wordle">🔤 Gospel Wordle Decoder</option>
-            </select>
-          </div>
+    <script>
+        // 1. FIREBASE CONFIGURATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyA7e0j5JbdIK7UFB2jEUxNLD3AWKNyznMk",
+            authDomain: "lds-scripture-quest.firebaseapp.com",
+            databaseURL: "https://lds-scripture-quest-default-rtdb.firebaseio.com",
+            projectId: "lds-scripture-quest",
+            storageBucket: "lds-scripture-quest.firebasestorage.app",
+            messagingSenderId: "175073574549",
+            appId: "1:175073574549:web:7d3dcdb1e5e9daa7dca59c",
+            measurementId: "G-6VDDT9DXXZ"
+        };
 
-          <div class="p-4 bg-slate-950/60 rounded-2xl border border-slate-800 space-y-2">
-            <p id="mode-desc-title" class="font-bold text-xs text-gold-400">Doctrinal Mastery Speed Blitz</p>
-            <p id="mode-desc-body" class="text-[11px] text-slate-400 leading-relaxed">Score team points by matching Scripture mastery passages to their correct references before time expires!</p>
-          </div>
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-          <div class="pt-2">
-            <button id="btn-add-bot" onclick="addBotPlayer()" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-xs text-slate-300 font-semibold flex items-center justify-center gap-2">
-              <i data-lucide="bot" class="w-4 h-4 text-gold-400"></i> ADD TEST BOT PLAYER
-            </button>
-          </div>
-        </div>
+        // 2. STATE & GAME DATA
+        let currentUser = { id: null, name: 'Brother Nephi', avatar: '🛡️' };
+        let currentRoomCode = null;
+        let roomRef = null;
+        let roomData = null;
+        let timerInterval = null;
+        let hasAnsweredCurrentQ = false;
+        let renderedQIndex = -1;
+        let renderedPhase = null;
 
-        <div class="lg:col-span-2 space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="font-cinzel font-bold text-slate-200 text-sm flex items-center gap-2">
-              <i data-lucide="shield" class="w-4 h-4 text-gold-400"></i> TEAM ROSTERS & DIVISIONS
-            </h3>
-            <span class="text-xs text-slate-400">Select a team below to switch sides</span>
-          </div>
+        const TEAMS = [
+            { id: 'Gold', name: 'Celestial Gold', color: 'text-amber-400', border: 'border-amber-500/40', bg: 'bg-amber-500/10' },
+            { id: 'Royal', name: 'Terrestrial Royal', color: 'text-blue-400', border: 'border-blue-500/40', bg: 'bg-blue-500/10' },
+            { id: 'Emerald', name: 'Telestial Emerald', color: 'text-emerald-400', border: 'border-emerald-500/40', bg: 'bg-emerald-500/10' },
+            { id: 'Sapphire', name: 'Zion Guards', color: 'text-purple-400', border: 'border-purple-500/40', bg: 'bg-purple-500/10' }
+        ];
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="team-containers">
-            <!-- TEAMS INJECTED DYNAMICALLY -->
-          </div>
-        </div>
-      </div>
-    </section>
+        // EXPANDED 20+ HARDCORE QUESTION DATABASES PER MODE
+        const MASTER_QUESTIONS = {
+            'speed-blitz': [
+                { q: '"I will go and do the things which the Lord hath commanded..."', options: ['1 Nephi 3:7', '2 Nephi 2:25', 'Alma 37:37', 'Mosiah 2:17'], correct: 0 },
+                { q: '"When ye are in the service of your fellow beings ye are only in the service of your God."', options: ['Ether 12:27', 'Mosiah 2:17', 'Alma 7:11-12', 'Moroni 10:4-5'], correct: 1 },
+                { q: '"Adam fell that men might be; and men are, that they might have joy."', options: ['1 Nephi 1:1', '2 Nephi 2:25', 'Helaman 5:12', '3 Nephi 11:10'], correct: 1 },
+                { q: '"For God so loved the world, that he gave his only begotten Son..."', options: ['John 3:16', 'Romans 1:16', 'Matthew 5:16', 'John 14:15'], correct: 0 },
+                { q: '"Trust in the Lord with all thine heart; and lean not unto thine own understanding."', options: ['Proverbs 3:5-6', 'Isaiah 1:18', 'Joshua 24:15', 'Psalm 23:1'], correct: 0 },
+                { q: '"Look unto me in every thought; doubt not, fear not."', options: ['D&C 6:36', 'D&C 18:10', 'D&C 19:23', 'D&C 58:42'], correct: 0 },
+                { q: '"Remember that it is upon the rock of our Redeemer, who is Christ... that ye must build your foundation."', options: ['Helaman 5:12', 'Alma 32:21', 'Ether 12:6', '3 Nephi 18:15'], correct: 0 },
+                { q: '"And when ye shall receive these things, I would exhort you that ye would ask God, the Eternal Father..."', options: ['Moroni 10:4-5', 'Alma 7:11', 'Mosiah 3:19', '2 Nephi 31:20'], correct: 0 },
+                { q: '"For the natural man is an enemy to God..."', options: ['Mosiah 3:19', 'Alma 37:37', '1 Nephi 19:23', 'Ether 12:27'], correct: 0 },
+                { q: '"Counsel with the Lord in all thy doings, and he will direct thee for good..."', options: ['Alma 37:37', 'Alma 32:21', 'Mosiah 4:30', 'Moroni 7:45'], correct: 0 },
+                { q: '"Faith is not to have a perfect knowledge of things..."', options: ['Alma 32:21', 'Ether 12:6', 'Moroni 7:33', '2 Nephi 2:27'], correct: 0 },
+                { q: '"The glory of God is intelligence..."', options: ['D&C 93:36', 'D&C 130:22', 'D&C 88:124', 'D&C 121:36'], correct: 0 },
+                { q: '"Choose ye this day whom ye will serve..."', options: ['Joshua 24:15', '1 Samuel 16:7', 'Isaiah 58:13-14', 'Malachi 3:8-10'], correct: 0 },
+                { q: '"If any of you lack wisdom, let him ask of God..."', options: ['James 1:5-6', 'Hebrews 12:9', '1 Corinthians 6:19-20', 'Galatians 5:22-23'], correct: 0 },
+                { q: '"Feast upon the words of Christ; for behold, the words of Christ will tell you all things what ye should do."', options: ['2 Nephi 32:3', '2 Nephi 31:20', '1 Nephi 8:30', 'Mosiah 2:41'], correct: 0 },
+                { q: '"Press forward with a steadfastness in Christ, having a perfect brightness of hope..."', options: ['2 Nephi 31:20', 'Alma 5:14', 'Mosiah 18:8-10', 'Ether 12:4'], correct: 0 },
+                { q: '"If ye love me, keep my commandments."', options: ['John 14:15', 'Matthew 22:36-39', 'John 15:13', '1 John 4:19'], correct: 0 },
+                { q: '"Be thou an example of the believers, in word, in conversation, in charity..."', options: ['1 Timothy 4:12', '2 Timothy 3:16-17', 'Philippians 4:13', 'Romans 8:28'], correct: 0 },
+                { q: '"I can do all things through Christ which strengtheneth me."', options: ['Philippians 4:13', 'Ephesians 6:11', 'Colossians 3:12', 'Hebrews 11:1'], correct: 0 },
+                { q: '"Behold, I am a disciple of Jesus Christ, the Son of God."', options: ['3 Nephi 5:13', 'Alma 38:12', '1 Nephi 1:1', 'Mormon 1:15'], correct: 0 },
+                { q: '"We believe in God, the Eternal Father, and in His Son, Jesus Christ, and in the Holy Ghost."', options: ['Articles of Faith 1:1', 'Articles of Faith 1:4', 'D&C 20:25', 'John 17:3'], correct: 0 },
+                { q: '"Be humble; and the Lord thy God shall lead thee by the hand..."', options: ['D&C 112:10', 'D&C 84:88', 'Alma 37:35', 'Ether 12:27'], correct: 0 }
+            ],
+            'word-scramble': [
+                { q: 'High Priest & King of Salem', answer: 'MELCHIZEDEK' },
+                { q: 'Leader of Secret Combinations & Robbers', answer: 'GADIANTON' },
+                { q: 'Nephite Martyr Burned for Preaching Abinadi’s Words', answer: 'ABINADI' },
+                { q: 'Last Jaredite King and Warrior', answer: 'CORIANTUMR' },
+                { q: 'Birthplace of the Savior Jesus Christ', answer: 'BETHLEHEM' },
+                { q: 'Period of Time when Gospel Truths are Revealed', answer: 'DISPENSATION' },
+                { q: 'Miraculous Director and Ball given to Lehi', answer: 'LIANHONA' },
+                { q: 'Father of Nations and Covenant Patriarch', answer: 'ABRAHAM' },
+                { q: 'Final Nephite Prophet and Record Keeper', answer: 'MORONI' },
+                { q: 'Hill where the Gold Plates were Sacredly Hidden', answer: 'CUMORAH' },
+                { q: 'Turning away from Sin and back to God', answer: 'REPENTANCE' },
+                { q: 'Sacred Covenant Ceremony in the Waters', answer: 'BAPTISM' },
+                { q: 'The Pure Love of Christ that Never Faileth', answer: 'CHARITY' },
+                { q: 'Prophet who Taught King Noah in Chains', answer: 'ABINADI' },
+                { q: 'Angel who Restored the Aaronic Priesthood', answer: 'JOHNTHEBAPTIST' },
+                { q: 'Ancient City of Peace, Holiness, and Unity', answer: 'ZION' },
+                { q: 'First Prophet and Visionary in the Book of Mormon', answer: 'LEHI' },
+                { q: 'Brother of Jared’s Sacred Waterproof Vessels', answer: 'BARGES' },
+                { q: 'Lamanite Prophet who Prophesied on the Wall', answer: 'SAMUEL' },
+                { q: 'Ancient Jaredite Prophet of Great Faith', answer: 'ETHER' },
+                { q: 'First President and Prophet of the Restoration', answer: 'JOSEPHSMITH' },
+                { q: 'Chief Captain who Raised the Title of Liberty', answer: 'CAPTAINMORONI' }
+            ],
+            'history-timeline': [
+                { q: 'Which event occurred FIRST in Church History?', options: ['First Vision in Sacred Grove', 'Organization of Church (1830)', 'Pioneers Enter Salt Lake Valley', 'Dedication of Kirtland Temple'], correct: 0 },
+                { q: 'Which event occurred LAST in Church History?', options: ['Publication of Book of Mormon', 'The First Vision', 'Exodus to Utah Territory', 'Martyrdom at Carthage Jail'], correct: 2 },
+                { q: 'Year the Church was officially organized in Fayette, NY:', options: ['1830', '1820', '1844', '1847'], correct: 0 },
+                { q: 'Year Joseph Smith had the First Vision:', options: ['1820', '1830', '1823', '1838'], correct: 0 },
+                { q: 'Year the Mormon Pioneers entered the Salt Lake Valley:', options: ['1847', '1830', '1850', '1860'], correct: 0 },
+                { q: 'Which Temple was dedicated FIRST in this dispensation?', options: ['Kirtland Temple', 'Nauvoo Temple', 'Salt Lake Temple', 'St. George Temple'], correct: 0 },
+                { q: 'Who served as the Second President of the Church?', options: ['Brigham Young', 'John Taylor', 'Wilford Woodruff', 'Lorenzo Snow'], correct: 0 },
+                { q: 'In which city were the Gold Plates translated mainly?', options: ['Harmony, PA & Fayette, NY', 'Nauvoo, IL', 'Salt Lake City, UT', 'Kirtland, OH'], correct: 0 },
+                { q: 'Primary scribe for the translation of the Book of Mormon:', options: ['Oliver Cowdery', 'Martin Harris', 'David Whitmer', 'Hyrum Smith'], correct: 0 },
+                { q: 'Where was the Female Relief Society first organized?', options: ['Nauvoo, Illinois', 'Kirtland, Ohio', 'Fayette, New York', 'Independence, Missouri'], correct: 0 }
+            ],
+            'gospel-wordle': [
+                { q: '5-Letter Gospel Vocabulary', hint: 'First principle of the Gospel.', answer: 'FAITH' },
+                { q: '5-Letter Gospel Vocabulary', hint: 'Sacred house of the Lord.', answer: 'TEMPLE' },
+                { q: '5-Letter Gospel Vocabulary', hint: 'Unmerited divine help and favor.', answer: 'GRACE' },
+                { q: '5-Letter Gospel Vocabulary', hint: 'To make at-one with God through Christ.', answer: 'ATONE' },
+                { q: '5-Letter Gospel Vocabulary', hint: 'Book of Mormon Prophet and Judge.', answer: 'ALMA' },
+                { q: '5-Letter Gospel Vocabulary', hint: 'Light of Christ that fills the world.', answer: 'LIGHT' },
+                { q: '5-Letter Gospel Vocabulary', hint: 'Gospel knowledge opposing falsehood.', answer: 'TRUTH' },
+                { q: '5-Letter Gospel Vocabulary', hint: 'Opposite of pride, necessary for baptism.', answer: 'MEEK' },
+                { q: '5-Letter Gospel Vocabulary', hint: 'Deep spiritual feeling of happiness.', answer: 'JOY' },
+                { q: '5-Letter Gospel Vocabulary', hint: 'Prophet who prayed all day and night.', answer: 'ENOS' }
+            ]
+        };
 
-    <!-- 5. ACTIVE GAME ENGINE SCREEN -->
-    <section id="screen-game" class="hidden w-full max-w-4xl space-y-6">
-      <div class="bg-slate-900/90 border border-gold-500/30 p-4 md:p-6 rounded-3xl flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <span class="text-2xl" id="game-mode-icon">⚡</span>
-          <div>
-            <h3 class="font-cinzel font-bold text-slate-100 text-base" id="active-mode-title">Speed Blitz</h3>
-            <p class="text-xs text-slate-400"><span id="game-status-label">Question</span> <span id="q-current">1</span> of <span id="q-total">10</span></p>
-          </div>
-        </div>
-        
-        <div class="flex items-center gap-4">
-          <div class="text-right">
-            <p class="text-[10px] uppercase tracking-wider text-slate-400" id="timer-label">Time Left</p>
-            <p class="font-mono text-xl font-bold text-gold-400" id="game-timer">20s</p>
-          </div>
-        </div>
-      </div>
+        // HARDCORE FISHER-YATES SCRAMBLER
+        function scrambleWord(word) {
+            let arr = word.split('');
+            if (arr.length <= 1) return word;
 
-      <!-- DYNAMIC GAME PLAY CARD -->
-      <div id="game-play-area" class="glass-card p-6 md:p-8 rounded-3xl border border-gold-500/30 min-h-[320px] flex flex-col justify-between">
-        <!-- GAME CONTENT RENDERED VIA JS -->
-      </div>
+            let scrambled = '';
+            let attempts = 0;
 
-      <!-- LIVE SCOREBOARD -->
-      <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
-        <h4 class="text-xs font-bold uppercase text-slate-400 mb-3 flex items-center gap-2">
-          <i data-lucide="trophy" class="w-4 h-4 text-gold-400"></i> LIVE TEAM STANDINGS
-        </h4>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="live-standings">
-          <!-- STANDINGS INJECTED HERE -->
-        </div>
-      </div>
-    </section>
+            do {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                scrambled = arr.join('');
+                attempts++;
+            } while (scrambled === word && attempts < 10);
 
-    <!-- MODALS -->
-    <div id="modal-host" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div class="glass-card max-w-sm w-full p-6 rounded-3xl space-y-4 border border-gold-500/40">
-        <h3 class="font-cinzel font-bold text-xl text-gold-400 text-center">Create Game Server</h3>
-        <p class="text-xs text-slate-400 text-center">Generate a private room code for your group.</p>
-        
-        <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex items-center gap-3">
-          <input type="checkbox" id="check-spectator" class="w-4 h-4 accent-gold-500 cursor-pointer" />
-          <label for="check-spectator" class="text-xs text-slate-300 font-medium cursor-pointer">
-            <span class="font-bold text-gold-400 block">Game Master Mode (Host Spectator)</span>
-            Watch teams, view correct answers, and control game flow without playing.
-          </label>
-        </div>
-
-        <div class="space-y-3 pt-2">
-          <button onclick="confirmHostRoom()" class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl font-cinzel tracking-wider">CREATE ROOM NOW</button>
-          <button onclick="hideModals()" class="w-full py-2.5 bg-slate-900 border border-slate-700 text-slate-400 text-xs font-semibold rounded-xl">CANCEL</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="modal-join" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div class="glass-card max-w-sm w-full p-6 rounded-3xl space-y-4 border border-gold-500/40">
-        <h3 class="font-cinzel font-bold text-xl text-gold-400 text-center">Join Private Room</h3>
-        <p class="text-xs text-slate-400 text-center">Enter the 6-character room code provided by host.</p>
-        <div>
-          <input type="text" id="input-room-code" placeholder="e.g. NEPHI7" class="w-full bg-slate-950 border border-slate-700 focus:border-gold-400 rounded-xl px-4 py-3 text-center font-mono text-lg text-gold-400 font-bold outline-none uppercase tracking-widest" />
-        </div>
-        <div class="space-y-2 pt-2">
-          <button onclick="confirmJoinRoom()" class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl font-cinzel tracking-wider">JOIN LOBBY</button>
-          <button onclick="hideModals()" class="w-full py-2.5 bg-slate-900 border border-slate-700 text-slate-400 text-xs font-semibold rounded-xl">CANCEL</button>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <footer class="w-full border-t border-slate-800/80 bg-slate-950 py-3 text-center text-[11px] text-slate-500">
-    Designed for Youth Activities, Seminary, & Institute Fellowship
-  </footer>
-
-  <script>
-    // 1. FIREBASE CONFIGURATION
-    const firebaseConfig = {
-      apiKey: "AIzaSyA7e0j5JbdIK7UFB2jEUxNLD3AWKNyznMk",
-      authDomain: "lds-scripture-quest.firebaseapp.com",
-      databaseURL: "https://lds-scripture-quest-default-rtdb.firebaseio.com",
-      projectId: "lds-scripture-quest",
-      storageBucket: "lds-scripture-quest.firebasestorage.app",
-      messagingSenderId: "175073574549",
-      appId: "1:175073574549:web:7d3dcdb1e5e9daa7dca59c",
-      measurementId: "G-6VDDT9DXXZ"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    // 2. STATE & GAME DATA
-    let currentUser = { id: null, name: 'Brother Nephi', avatar: '🛡️' };
-    let currentRoomCode = null;
-    let roomRef = null;
-    let roomData = null;
-    let timerInterval = null;
-    let hasAnsweredCurrentQ = false;
-    let renderedQIndex = -1;
-    let renderedPhase = null;
-
-    const TEAMS = [
-      { id: 'Gold', name: 'Celestial Gold', color: 'text-amber-400', border: 'border-amber-500/40', bg: 'bg-amber-500/10' },
-      { id: 'Royal', name: 'Terrestrial Royal', color: 'text-blue-400', border: 'border-blue-500/40', bg: 'bg-blue-500/10' },
-      { id: 'Emerald', name: 'Telestial Emerald', color: 'text-emerald-400', border: 'border-emerald-500/40', bg: 'bg-emerald-500/10' },
-      { id: 'Sapphire', name: 'Zion Guards', color: 'text-purple-400', border: 'border-purple-500/40', bg: 'bg-purple-500/10' }
-    ];
-
-    // MASSIVE 35+ QUESTION DATABASES PER MODE
-    const MASTER_QUESTIONS = {
-      'speed-blitz': [
-        { q: '"I will go and do the things which the Lord hath commanded..."', options: ['1 Nephi 3:7', '2 Nephi 2:25', 'Alma 37:37', 'Mosiah 2:17'], correct: 0 },
-        { q: '"When ye are in the service of your fellow beings ye are only in the service of your God."', options: ['Ether 12:27', 'Mosiah 2:17', 'Alma 7:11-12', 'Moroni 10:4-5'], correct: 1 },
-        { q: '"Adam fell that men might be; and men are, that they might have joy."', options: ['1 Nephi 1:1', '2 Nephi 2:25', 'Helaman 5:12', '3 Nephi 11:10'], correct: 1 },
-        { q: '"For God so loved the world, that he gave his only begotten Son..."', options: ['John 3:16', 'Romans 1:16', 'Matthew 5:16', 'John 14:15'], correct: 0 },
-        { q: '"Trust in the Lord with all thine heart; and lean not unto thine own understanding."', options: ['Proverbs 3:5-6', 'Isaiah 1:18', 'Joshua 24:15', 'Psalm 23:1'], correct: 0 },
-        { q: '"Look unto me in every thought; doubt not, fear not."', options: ['D&C 6:36', 'D&C 18:10', 'D&C 19:23', 'D&C 58:42'], correct: 0 },
-        { q: '"Remember that it is upon the rock of our Redeemer, who is Christ... that ye must build your foundation."', options: ['Helaman 5:12', 'Alma 32:21', 'Ether 12:6', '3 Nephi 18:15'], correct: 0 },
-        { q: '"And when ye shall receive these things, I would exhort you that ye would ask God, the Eternal Father..."', options: ['Moroni 10:4-5', 'Alma 7:11', 'Mosiah 3:19', '2 Nephi 31:20'], correct: 0 },
-        { q: '"For the natural man is an enemy to God..."', options: ['Mosiah 3:19', 'Alma 37:37', '1 Nephi 19:23', 'Ether 12:27'], correct: 0 },
-        { q: '"Counsel with the Lord in all thy doings, and he will direct thee for good..."', options: ['Alma 37:37', 'Alma 32:21', 'Mosiah 4:30', 'Moroni 7:45'], correct: 0 },
-        { q: '"Faith is not to have a perfect knowledge of things..."', options: ['Alma 32:21', 'Ether 12:6', 'Moroni 7:33', '2 Nephi 2:27'], correct: 0 },
-        { q: '"The glory of God is intelligence..."', options: ['D&C 93:36', 'D&C 130:22', 'D&C 88:124', 'D&C 121:36'], correct: 0 },
-        { q: '"Choose ye this day whom ye will serve..."', options: ['Joshua 24:15', '1 Samuel 16:7', 'Isaiah 58:13-14', 'Malachi 3:8-10'], correct: 0 },
-        { q: '"If any of you lack wisdom, let him ask of God..."', options: ['James 1:5-6', 'Hebrews 12:9', '1 Corinthians 6:19-20', 'Galatians 5:22-23'], correct: 0 },
-        { q: '"Feast upon the words of Christ..."', options: ['2 Nephi 32:3', '2 Nephi 31:20', '1 Nephi 8:30', 'Mosiah 2:41'], correct: 0 }
-      ],
-      'word-scramble': [
-        { q: 'Book of Mormon Prophet', prompt: 'E P H I N', answer: 'NEPHI' },
-        { q: 'Holy City of Peace & Unity', prompt: 'I O N Z', answer: 'ZION' },
-        { q: 'Final Nephite Record Keeper', prompt: 'I N O R O M', answer: 'MORONI' },
-        { q: 'Father of Nations', prompt: 'M A H A R B A', answer: 'ABRAHAM' },
-        { q: 'Sacred Houses of the Lord', prompt: 'S E L P M E T', answer: 'TEMPLES' },
-        { q: 'Pure Love of Christ', prompt: 'Y T I R A H C', answer: 'CHARITY' },
-        { q: 'First Prophet of the Restoration', prompt: 'H P E S O J', answer: 'JOSEPH' },
-        { q: 'Ancient Nephite King & Teacher', prompt: 'H A I S O M', answer: 'MOSIAH' },
-        { q: 'Lamanite Prophet on the Wall', prompt: 'L E U M A S', answer: 'SAMUEL' },
-        { q: 'Hill where Gold Plates were Buried', prompt: 'H A R O M U C', answer: 'CUMORAH' },
-        { q: 'First Principle of the Gospel', prompt: 'H T I A F', answer: 'FAITH' },
-        { q: 'Turning from Sin to God', prompt: 'E C N A T N E P E R', answer: 'REPENTANCE' },
-        { q: 'Holy Covenant Ordinance', prompt: 'M S I T P A B', answer: 'BAPTISM' },
-        { q: 'Brother of Jared’s Vessel', prompt: 'G E A R A B', answer: 'BARGE' },
-        { q: 'Guide & Compass for Lehi', prompt: 'A N I H O A H A L R', answer: 'LIANHONA' }
-      ],
-      'history-timeline': [
-        { q: 'Which event occurred FIRST in Church History?', options: ['First Vision in Sacred Grove', 'Organization of Church (1830)', 'Pioneers Enter Salt Lake Valley', 'Dedication of Kirtland Temple'], correct: 0 },
-        { q: 'Which event occurred LAST in Church History?', options: ['Publication of Book of Mormon', 'The First Vision', 'Exodus to Utah Territory', 'Martyrdom at Carthage Jail'], correct: 2 },
-        { q: 'Year the Church was officially organized in Fayette, NY:', options: ['1830', '1820', '1844', '1847'], correct: 0 },
-        { q: 'Year Joseph Smith had the First Vision:', options: ['1820', '1830', '1823', '1838'], correct: 0 },
-        { q: 'Year the Mormon Pioneers entered the Salt Lake Valley:', options: ['1847', '1830', '1850', '1860'], correct: 0 },
-        { q: 'Which Temple was dedicated FIRST in this dispensation?', options: ['Kirtland Temple', 'Nauvoo Temple', 'Salt Lake Temple', 'St. George Temple'], correct: 0 },
-        { q: 'Who served as the Second President of the Church?', options: ['Brigham Young', 'John Taylor', 'Wilford Woodruff', 'Lorenzo Snow'], correct: 0 },
-        { q: 'In which city were the Gold Plates translated mainly?', options: ['Harmony, PA & Fayette, NY', 'Nauvoo, IL', 'Salt Lake City, UT', 'Kirtland, OH'], correct: 0 },
-        { q: 'Primary scribe for the translation of the Book of Mormon:', options: ['Oliver Cowdery', 'Martin Harris', 'David Whitmer', 'Hyrum Smith'], correct: 0 },
-        { q: 'Where was the Female Relief Society first organized?', options: ['Nauvoo, Illinois', 'Kirtland, Ohio', 'Fayette, New York', 'Independence, Missouri'], correct: 0 }
-      ],
-      'gospel-wordle': [
-        { q: '5-Letter Gospel Vocabulary', hint: 'First principle of the Gospel.', answer: 'FAITH' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Sacred house of the Lord.', answer: 'TEMPLE' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Unmerited divine help and favor.', answer: 'GRACE' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'To make at-one with God through Christ.', answer: 'ATONE' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Book of Mormon Prophet and Judge.', answer: 'ALMA' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Light of Christ that fills the world.', answer: 'LIGHT' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Gospel knowledge opposing falsehood.', answer: 'TRUTH' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Opposite of pride, necessary for baptism.', answer: 'MEEK' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Deep spiritual feeling of happiness.', answer: 'JOY' },
-        { q: '5-Letter Gospel Vocabulary', hint: 'Prophet who prayed all day and night.', answer: 'ENOS' }
-      ]
-    };
-
-    // 3. INIT & NAVIGATION
-    window.addEventListener('DOMContentLoaded', () => {
-      lucide.createIcons();
-      startSplashTimer();
-      currentUser.id = 'usr_' + Math.random().toString(36).substring(2, 9);
-    });
-
-    function startSplashTimer() {
-      let count = 5;
-      const progressEl = document.getElementById('splash-progress');
-      const countdownEl = document.getElementById('splash-countdown');
-
-      const timer = setInterval(() => {
-        count--;
-        countdownEl.innerText = count + 's';
-        progressEl.style.width = (((5 - count) / 5) * 100) + '%';
-
-        if (count <= 0) {
-          clearInterval(timer);
-          showScreen('screen-auth');
-        }
-      }, 1000);
-    }
-
-    function showScreen(screenId) {
-      ['screen-splash', 'screen-auth', 'screen-menu', 'screen-lobby', 'screen-game'].forEach(id => {
-        document.getElementById(id).classList.add('hidden');
-      });
-      document.getElementById(screenId).classList.remove('hidden');
-      lucide.createIcons();
-    }
-
-    function selectAvatar(emoji) {
-      currentUser.avatar = emoji;
-      document.querySelectorAll('.avatar-btn').forEach(btn => btn.classList.remove('border-gold-400', 'bg-slate-800'));
-      event.currentTarget.classList.add('border-gold-400', 'bg-slate-800');
-    }
-
-    function saveProfile(e) {
-      e.preventDefault();
-      const input = document.getElementById('input-name').value.trim();
-      if (input) currentUser.name = input;
-
-      document.getElementById('badge-name').innerText = currentUser.name;
-      document.getElementById('badge-avatar').innerText = currentUser.avatar;
-      document.getElementById('user-badge').classList.remove('hidden');
-      document.getElementById('user-badge').classList.add('flex');
-
-      showScreen('screen-menu');
-    }
-
-    function goHome() {
-      if (currentRoomCode) leaveRoom();
-      showScreen('screen-menu');
-    }
-
-    // 4. LOBBY & FIREBASE SYSTEM
-    function showHostModal() { document.getElementById('modal-host').classList.remove('hidden'); }
-    function showJoinModal() { document.getElementById('modal-join').classList.remove('hidden'); }
-    function hideModals() {
-      document.getElementById('modal-host').classList.add('hidden');
-      document.getElementById('modal-join').classList.add('hidden');
-    }
-
-    function generateRoomCode() {
-      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-      let code = '';
-      for (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-      return code;
-    }
-
-    function confirmHostRoom() {
-      hideModals();
-      currentRoomCode = generateRoomCode();
-      roomRef = db.ref('rooms/' + currentRoomCode);
-      const isSpectator = document.getElementById('check-spectator').checked;
-
-      const initialRoomState = {
-        hostId: currentUser.id,
-        hostIsSpectator: isSpectator,
-        selectedGame: 'speed-blitz',
-        status: 'lobby',
-        currentQuestionIndex: 0,
-        timer: 20,
-        phase: 'playing',
-        players: isSpectator ? {} : {
-          [currentUser.id]: {
-            id: currentUser.id,
-            name: currentUser.name,
-            avatar: currentUser.avatar,
-            team: 'Gold',
-            isHost: true,
-            score: 0
-          }
-        }
-      };
-
-      roomRef.set(initialRoomState).then(() => {
-        listenToRoom();
-        showScreen('screen-lobby');
-      });
-    }
-
-    function confirmJoinRoom() {
-      const codeInput = document.getElementById('input-room-code').value.trim().toUpperCase();
-      if (!codeInput || codeInput.length !== 6) {
-        alert('Please enter a valid 6-character room code.');
-        return;
-      }
-
-      hideModals();
-      currentRoomCode = codeInput;
-      roomRef = db.ref('rooms/' + currentRoomCode);
-
-      roomRef.once('value', (snapshot) => {
-        if (!snapshot.exists()) {
-          alert('Room code not found.');
-          return;
+            return arr.join(' ');
         }
 
-        const playerRef = db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id);
-        playerRef.set({
-          id: currentUser.id,
-          name: currentUser.name,
-          avatar: currentUser.avatar,
-          team: 'Royal',
-          isHost: false,
-          score: 0
-        }).then(() => {
-          listenToRoom();
-          showScreen('screen-lobby');
+        // 3. INIT & NAVIGATION
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            startSplashTimer();
+            currentUser.id = 'usr_' + Math.random().toString(36).substring(2, 9);
         });
-      });
-    }
 
-    function listenToRoom() {
-      if (!roomRef) return;
+        function startSplashTimer() {
+            let count = 5;
+            const progressEl = document.getElementById('splash-progress');
+            const countdownEl = document.getElementById('splash-countdown');
 
-      roomRef.on('value', (snapshot) => {
-        const prevStatus = roomData ? roomData.status : 'lobby';
-        const prevQ = roomData ? roomData.currentQuestionIndex : 0;
-        const prevPhase = roomData ? roomData.phase : 'playing';
-        
-        roomData = snapshot.val();
+            const timer = setInterval(() => {
+                count--;
+                countdownEl.innerText = count + 's';
+                progressEl.style.width = (((5 - count) / 5) * 100) + '%';
 
-        if (!roomData) {
-          alert('Room has been closed.');
-          leaveRoom();
-          return;
+                if (count <= 0) {
+                    clearInterval(timer);
+                    showScreen('screen-auth');
+                }
+            }, 1000);
         }
 
-        const isHostSpectator = roomData.hostId === currentUser.id && roomData.hostIsSpectator;
-
-        if (!isHostSpectator && (!roomData.players || !roomData.players[currentUser.id])) {
-          alert('You were removed from the room.');
-          leaveRoom();
-          return;
-        }
-
-        if (roomData.status === 'lobby') {
-          renderedQIndex = -1;
-          updateLobbyUI();
-          showScreen('screen-lobby');
-        } else if (roomData.status === 'playing') {
-          if (prevStatus !== 'playing' || prevQ !== roomData.currentQuestionIndex || prevPhase !== roomData.phase) {
-            hasAnsweredCurrentQ = false;
-          }
-          launchGameEngine();
-        } else if (roomData.status === 'finished') {
-          renderVictoryScreen();
-        }
-      });
-    }
-
-    function updateLobbyUI() {
-      document.getElementById('lobby-code').innerText = currentRoomCode;
-      const isHost = roomData.hostId === currentUser.id;
-
-      if (isHost) {
-        document.getElementById('host-tag').classList.remove('hidden');
-        document.getElementById('btn-start-game').classList.remove('hidden');
-        document.getElementById('select-game-mode').disabled = false;
-      } else {
-        document.getElementById('host-tag').classList.add('hidden');
-        document.getElementById('btn-start-game').classList.add('hidden');
-        document.getElementById('select-game-mode').disabled = true;
-      }
-
-      document.getElementById('select-game-mode').value = roomData.selectedGame || 'speed-blitz';
-
-      renderTeamRosters();
-    }
-
-    function renderTeamRosters() {
-      const container = document.getElementById('team-containers');
-      container.innerHTML = '';
-
-      const isHost = roomData.hostId === currentUser.id;
-      const players = roomData.players ? Object.values(roomData.players) : [];
-
-      TEAMS.forEach(team => {
-        const teamPlayers = players.filter(p => p.team === team.id);
-
-        let playersHTML = teamPlayers.map(p => {
-          return '<div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/80 border border-slate-800">' +
-            '<div class="flex items-center gap-2">' +
-              '<span class="text-base">' + p.avatar + '</span>' +
-              '<span class="text-xs font-bold text-slate-200">' + p.name + (p.id === currentUser.id ? ' (You)' : '') + '</span>' +
-              (p.isHost ? '<span class="text-[9px] bg-gold-500/20 text-gold-400 font-bold px-1.5 py-0.5 rounded">HOST</span>' : '') +
-            '</div>' +
-            (isHost && p.id !== currentUser.id ? 
-              '<button onclick="removePlayer(\'' + p.id + '\')" class="text-red-400 hover:text-red-300 p-1 text-xs font-bold" title="Kick Player">' +
-                '<i data-lucide="user-x" class="w-4 h-4"></i>' +
-              '</button>' : '') +
-          '</div>';
-        }).join('');
-
-        if (teamPlayers.length === 0) {
-          playersHTML = '<p class="text-xs text-slate-500 italic p-2 text-center">No players assigned</p>';
-        }
-
-        const teamCard = document.createElement('div');
-        teamCard.className = 'p-4 rounded-2xl bg-slate-900/80 border ' + team.border + ' space-y-3';
-        teamCard.innerHTML = 
-          '<div class="flex items-center justify-between">' +
-            '<h4 class="font-bold text-xs ' + team.color + ' uppercase tracking-wider">' + team.name + '</h4>' +
-            (!isHost || !roomData.hostIsSpectator ? '<button onclick="switchTeam(\'' + team.id + '\')" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-semibold border border-slate-700">JOIN</button>' : '') +
-          '</div>' +
-          '<div class="space-y-2">' + playersHTML + '</div>';
-        container.appendChild(teamCard);
-      });
-
-      lucide.createIcons();
-    }
-
-    function switchTeam(teamId) {
-      if (!currentRoomCode || (roomData.hostId === currentUser.id && roomData.hostIsSpectator)) return;
-      db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id + '/team').set(teamId);
-    }
-
-    function removePlayer(playerId) {
-      if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
-      db.ref('rooms/' + currentRoomCode + '/players/' + playerId).remove();
-    }
-
-    function addBotPlayer() {
-      if (!currentRoomCode) return;
-      const botId = 'bot_' + Math.random().toString(36).substring(2, 7);
-      const botNames = ['Elder Helaman', 'Sister Emma', 'Elder Moroni', 'Sister Eliza'];
-      const randomName = botNames[Math.floor(Math.random() * botNames.length)];
-
-      db.ref('rooms/' + currentRoomCode + '/players/' + botId).set({
-        id: botId,
-        name: randomName,
-        avatar: '🤖',
-        team: 'Sapphire',
-        isHost: false,
-        score: 0
-      });
-    }
-
-    function updateSelectedGameMode() {
-      if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
-      const mode = document.getElementById('select-game-mode').value;
-      db.ref('rooms/' + currentRoomCode + '/selectedGame').set(mode);
-    }
-
-    function leaveRoom() {
-      if (roomRef && currentRoomCode) {
-        if (!roomData || roomData.hostId !== currentUser.id || !roomData.hostIsSpectator) {
-          db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id).remove();
-        }
-        roomRef.off();
-      }
-      currentRoomCode = null;
-      roomRef = null;
-      roomData = null;
-      if (timerInterval) clearInterval(timerInterval);
-      showScreen('screen-menu');
-    }
-
-    function resetToLobby() {
-      if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
-
-      const updates = {};
-      if (roomData.players) {
-        Object.keys(roomData.players).forEach(pId => {
-          updates['rooms/' + currentRoomCode + '/players/' + pId + '/score'] = 0;
-        });
-      }
-      updates['rooms/' + currentRoomCode + '/status'] = 'lobby';
-      updates['rooms/' + currentRoomCode + '/currentQuestionIndex'] = 0;
-      updates['rooms/' + currentRoomCode + '/timer'] = 20;
-      updates['rooms/' + currentRoomCode + '/phase'] = 'playing';
-
-      db.ref().update(updates);
-    }
-
-    function shuffleArray(array) {
-      let arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    function startGame() {
-      if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
-      const mode = roomData.selectedGame || 'speed-blitz';
-      const fullBank = MASTER_QUESTIONS[mode] || [];
-      const randomizedQuestions = shuffleArray(fullBank).slice(0, 10);
-
-      db.ref('rooms/' + currentRoomCode).update({
-        status: 'playing',
-        currentQuestionIndex: 0,
-        timer: 20,
-        phase: 'playing',
-        gameQuestions: randomizedQuestions
-      });
-      startHostTimer();
-    }
-
-    function startHostTimer() {
-      if (timerInterval) clearInterval(timerInterval);
-      
-      timerInterval = setInterval(() => {
-        if (!currentRoomCode || !roomData || roomData.hostId !== currentUser.id || roomData.status !== 'playing') {
-          clearInterval(timerInterval);
-          return;
-        }
-
-        let currentTimer = roomData.timer !== undefined ? roomData.timer : 20;
-        let currentPhase = roomData.phase || 'playing';
-        let newTimer = currentTimer - 1;
-
-        if (newTimer <= 0) {
-          if (currentPhase === 'playing') {
-            // Switch to Answer Reveal Phase for 5 seconds
-            db.ref('rooms/' + currentRoomCode).update({
-              phase: 'revealing',
-              timer: 5
+        function showScreen(screenId) {
+            ['screen-splash', 'screen-auth', 'screen-menu', 'screen-lobby', 'screen-game'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
             });
-          } else if (currentPhase === 'revealing') {
-            // Move to next question or finish game
+            document.getElementById(screenId).classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function selectAvatar(emoji) {
+            currentUser.avatar = emoji;
+            document.querySelectorAll('.avatar-btn').forEach(btn => btn.classList.remove('border-gold-400', 'bg-slate-800'));
+            event.currentTarget.classList.add('border-gold-400', 'bg-slate-800');
+        }
+
+        function saveProfile(e) {
+            e.preventDefault();
+            const input = document.getElementById('input-name').value.trim();
+            if (input) currentUser.name = input;
+
+            document.getElementById('badge-name').innerText = currentUser.name;
+            document.getElementById('badge-avatar').innerText = currentUser.avatar;
+            document.getElementById('user-badge').classList.remove('hidden');
+            document.getElementById('user-badge').classList.add('flex');
+
+            showScreen('screen-menu');
+        }
+
+        function goHome() {
+            if (currentRoomCode) leaveRoom();
+            showScreen('screen-menu');
+        }
+
+        // 4. LOBBY & FIREBASE SYSTEM
+        function showHostModal() { document.getElementById('modal-host').classList.remove('hidden'); }
+        function showJoinModal() { document.getElementById('modal-join').classList.remove('hidden'); }
+        function hideModals() {
+            document.getElementById('modal-host').classList.add('hidden');
+            document.getElementById('modal-join').classList.add('hidden');
+        }
+
+        function generateRoomCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let code = '';
+            for (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+            return code;
+        }
+
+        function confirmHostRoom() {
+            hideModals();
+            currentRoomCode = generateRoomCode();
+            roomRef = db.ref('rooms/' + currentRoomCode);
+            const isSpectator = document.getElementById('check-spectator').checked;
+
+            const initialRoomState = {
+                hostId: currentUser.id,
+                hostIsSpectator: isSpectator,
+                selectedGame: 'speed-blitz',
+                status: 'lobby',
+                currentQuestionIndex: 0,
+                timer: 20,
+                phase: 'playing',
+                players: isSpectator ? {} : {
+                    [currentUser.id]: {
+                        id: currentUser.id,
+                        name: currentUser.name,
+                        avatar: currentUser.avatar,
+                        team: 'Gold',
+                        isHost: true,
+                        score: 0
+                    }
+                }
+            };
+
+            roomRef.set(initialRoomState).then(() => {
+                listenToRoom();
+                showScreen('screen-lobby');
+            });
+        }
+
+        function confirmJoinRoom() {
+            const codeInput = document.getElementById('input-room-code').value.trim().toUpperCase();
+            if (!codeInput || codeInput.length !== 6) {
+                alert('Please enter a valid 6-character room code.');
+                return;
+            }
+
+            hideModals();
+            currentRoomCode = codeInput;
+            roomRef = db.ref('rooms/' + currentRoomCode);
+
+            roomRef.once('value', (snapshot) => {
+                if (!snapshot.exists()) {
+                    alert('Room code not found.');
+                    return;
+                }
+
+                const playerRef = db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id);
+                playerRef.set({
+                    id: currentUser.id,
+                    name: currentUser.name,
+                    avatar: currentUser.avatar,
+                    team: 'Royal',
+                    isHost: false,
+                    score: 0
+                }).then(() => {
+                    listenToRoom();
+                    showScreen('screen-lobby');
+                });
+            });
+        }
+
+        function listenToRoom() {
+            if (!roomRef) return;
+
+            roomRef.on('value', (snapshot) => {
+                const prevStatus = roomData ? roomData.status : 'lobby';
+                const prevQ = roomData ? roomData.currentQuestionIndex : 0;
+                const prevPhase = roomData ? roomData.phase : 'playing';
+
+                roomData = snapshot.val();
+
+                if (!roomData) {
+                    alert('Room has been closed.');
+                    leaveRoom();
+                    return;
+                }
+
+                const isHostSpectator = roomData.hostId === currentUser.id && roomData.hostIsSpectator;
+
+                if (!isHostSpectator && (!roomData.players || !roomData.players[currentUser.id])) {
+                    alert('You were removed from the room.');
+                    leaveRoom();
+                    return;
+                }
+
+                if (roomData.status === 'lobby') {
+                    renderedQIndex = -1;
+                    updateLobbyUI();
+                    showScreen('screen-lobby');
+                } else if (roomData.status === 'playing') {
+                    if (prevStatus !== 'playing' || prevQ !== roomData.currentQuestionIndex || prevPhase !== roomData.phase) {
+                        hasAnsweredCurrentQ = false;
+                    }
+                    launchGameEngine();
+                } else if (roomData.status === 'finished') {
+                    renderVictoryScreen();
+                }
+            });
+        }
+
+        function updateLobbyUI() {
+            document.getElementById('lobby-code').innerText = currentRoomCode;
+            const isHost = roomData.hostId === currentUser.id;
+
+            if (isHost) {
+                document.getElementById('host-tag').classList.remove('hidden');
+                document.getElementById('btn-start-game').classList.remove('hidden');
+                document.getElementById('select-game-mode').disabled = false;
+            } else {
+                document.getElementById('host-tag').classList.add('hidden');
+                document.getElementById('btn-start-game').classList.add('hidden');
+                document.getElementById('select-game-mode').disabled = true;
+            }
+
+            document.getElementById('select-game-mode').value = roomData.selectedGame || 'speed-blitz';
+
+            renderTeamRosters();
+        }
+
+        function renderTeamRosters() {
+            const container = document.getElementById('team-containers');
+            container.innerHTML = '';
+
+            const isHost = roomData.hostId === currentUser.id;
+            const players = roomData.players ? Object.values(roomData.players) : [];
+
+            TEAMS.forEach(team => {
+                const teamPlayers = players.filter(p => p.team === team.id);
+
+                let playersHTML = teamPlayers.map(p => {
+                    return '<div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-950/80 border border-slate-800">' +
+                        '<div class="flex items-center gap-2">' +
+                        '<span class="text-base">' + p.avatar + '</span>' +
+                        '<span class="text-xs font-bold text-slate-200">' + p.name + (p.id === currentUser.id ? ' (You)' : '') + '</span>' +
+                        (p.isHost ? '<span class="text-[9px] bg-gold-500/20 text-gold-400 font-bold px-1.5 py-0.5 rounded">HOST</span>' : '') +
+                        '</div>' +
+                        (isHost && p.id !== currentUser.id ?
+                            '<button onclick="removePlayer(\'' + p.id + '\')" class="text-red-400 hover:text-red-300 p-1 text-xs font-bold" title="Kick Player">' +
+                            '<i data-lucide="user-x" class="w-4 h-4"></i>' +
+                            '</button>' : '') +
+                        '</div>';
+                }).join('');
+
+                if (teamPlayers.length === 0) {
+                    playersHTML = '<p class="text-xs text-slate-500 italic p-2 text-center">No players assigned</p>';
+                }
+
+                const teamCard = document.createElement('div');
+                teamCard.className = 'p-4 rounded-2xl bg-slate-900/80 border ' + team.border + ' space-y-3';
+                teamCard.innerHTML =
+                    '<div class="flex items-center justify-between">' +
+                    '<h4 class="font-bold text-xs ' + team.color + ' uppercase tracking-wider">' + team.name + '</h4>' +
+                    (!isHost || !roomData.hostIsSpectator ? '<button onclick="switchTeam(\'' + team.id + '\')" class="px-2.5 py-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-semibold border border-slate-700">JOIN</button>' : '') +
+                    '</div>' +
+                    '<div class="space-y-2">' + playersHTML + '</div>';
+                container.appendChild(teamCard);
+            });
+
+            lucide.createIcons();
+        }
+
+        function switchTeam(teamId) {
+            if (!currentRoomCode || (roomData.hostId === currentUser.id && roomData.hostIsSpectator)) return;
+            db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id + '/team').set(teamId);
+        }
+
+        function removePlayer(playerId) {
+            if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
+            db.ref('rooms/' + currentRoomCode + '/players/' + playerId).remove();
+        }
+
+        function addBotPlayer() {
+            if (!currentRoomCode) return;
+            const botId = 'bot_' + Math.random().toString(36).substring(2, 7);
+            const botNames = ['Elder Helaman', 'Sister Emma', 'Elder Moroni', 'Sister Eliza'];
+            const randomName = botNames[Math.floor(Math.random() * botNames.length)];
+
+            db.ref('rooms/' + currentRoomCode + '/players/' + botId).set({
+                id: botId,
+                name: randomName,
+                avatar: '🤖',
+                team: 'Sapphire',
+                isHost: false,
+                score: 0
+            });
+        }
+
+        function updateSelectedGameMode() {
+            if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
+            const mode = document.getElementById('select-game-mode').value;
+            db.ref('rooms/' + currentRoomCode + '/selectedGame').set(mode);
+        }
+
+        function leaveRoom() {
+            if (roomRef && currentRoomCode) {
+                if (!roomData || roomData.hostId !== currentUser.id || !roomData.hostIsSpectator) {
+                    db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id).remove();
+                }
+                roomRef.off();
+            }
+            currentRoomCode = null;
+            roomRef = null;
+            roomData = null;
+            if (timerInterval) clearInterval(timerInterval);
+            showScreen('screen-menu');
+        }
+
+        function resetToLobby() {
+            if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
+
+            const updates = {};
+            if (roomData.players) {
+                Object.keys(roomData.players).forEach(pId => {
+                    updates['rooms/' + currentRoomCode + '/players/' + pId + '/score'] = 0;
+                });
+            }
+            updates['rooms/' + currentRoomCode + '/status'] = 'lobby';
+            updates['rooms/' + currentRoomCode + '/currentQuestionIndex'] = 0;
+            updates['rooms/' + currentRoomCode + '/timer'] = 20;
+            updates['rooms/' + currentRoomCode + '/phase'] = 'playing';
+
+            db.ref().update(updates);
+        }
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function startGame() {
+            if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
+            const mode = roomData.selectedGame || 'speed-blitz';
+            const fullBank = MASTER_QUESTIONS[mode] || [];
+
+            // Select 20 Randomized Questions
+            let randomizedQuestions = shuffleArray(fullBank).slice(0, 20);
+
+            // Scramble words dynamically if Word Scramble mode
+            if (mode === 'word-scramble') {
+                randomizedQuestions = randomizedQuestions.map(item => ({
+                    ...item,
+                    prompt: scrambleWord(item.answer)
+                }));
+            }
+
+            db.ref('rooms/' + currentRoomCode).update({
+                status: 'playing',
+                currentQuestionIndex: 0,
+                timer: 20,
+                phase: 'playing',
+                gameQuestions: randomizedQuestions
+            });
+            startHostTimer();
+        }
+
+        function startHostTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            timerInterval = setInterval(() => {
+                if (!currentRoomCode || !roomData || roomData.hostId !== currentUser.id || roomData.status !== 'playing') {
+                    clearInterval(timerInterval);
+                    return;
+                }
+
+                let currentTimer = roomData.timer !== undefined ? roomData.timer : 20;
+                let currentPhase = roomData.phase || 'playing';
+                let newTimer = currentTimer - 1;
+
+                if (newTimer <= 0) {
+                    if (currentPhase === 'playing') {
+                        db.ref('rooms/' + currentRoomCode).update({
+                            phase: 'revealing',
+                            timer: 5
+                        });
+                    } else if (currentPhase === 'revealing') {
+                        const questionsList = roomData.gameQuestions || [];
+                        const nextQ = (roomData.currentQuestionIndex || 0) + 1;
+
+                        if (nextQ < questionsList.length) {
+                            db.ref('rooms/' + currentRoomCode).update({
+                                currentQuestionIndex: nextQ,
+                                timer: 20,
+                                phase: 'playing'
+                            });
+                        } else {
+                            clearInterval(timerInterval);
+                            db.ref('rooms/' + currentRoomCode + '/status').set('finished');
+                        }
+                    }
+                } else {
+                    db.ref('rooms/' + currentRoomCode + '/timer').set(newTimer);
+                }
+            }, 1000);
+        }
+
+        // 5. GAME ENGINE
+        function launchGameEngine() {
+            showScreen('screen-game');
+            const gameMode = roomData.selectedGame || 'speed-blitz';
+            const qIndex = roomData.currentQuestionIndex || 0;
+            const questionsList = roomData.gameQuestions || MASTER_QUESTIONS[gameMode] || [];
+            const phase = roomData.phase || 'playing';
+            const isSpectatorHost = roomData.hostId === currentUser.id && roomData.hostIsSpectator;
+
+            document.getElementById('active-mode-title').innerText = gameMode.toUpperCase().replace('-', ' ');
+            document.getElementById('q-current').innerText = (qIndex + 1);
+            document.getElementById('q-total').innerText = questionsList.length;
+            document.getElementById('game-timer').innerText = (roomData.timer !== undefined ? roomData.timer : 20) + 's';
+
+            if (phase === 'revealing') {
+                document.getElementById('game-status-label').innerText = 'Answer Reveal in';
+                document.getElementById('timer-label').innerText = 'Reveal Countdown';
+            } else {
+                document.getElementById('game-status-label').innerText = 'Question';
+                document.getElementById('timer-label').innerText = 'Time Left';
+            }
+
+            if (isSpectatorHost) {
+                renderAdminDashboard(gameMode, qIndex, phase);
+            } else {
+                if (renderedQIndex !== qIndex || renderedPhase !== phase) {
+                    renderedQIndex = qIndex;
+                    renderedPhase = phase;
+                    renderActiveQuestion(gameMode, qIndex, phase);
+                }
+            }
+
+            renderLiveStandings();
+        }
+
+        function renderAdminDashboard(mode, qIndex, phase) {
+            const playArea = document.getElementById('game-play-area');
+            const questionsList = roomData.gameQuestions || MASTER_QUESTIONS[mode] || [];
+            const qObj = questionsList[qIndex] || questionsList[0];
+
+            if (!qObj) return;
+
+            let correctAnswerText = '';
+            if (qObj.options !== undefined) {
+                correctAnswerText = qObj.options[qObj.correct];
+            } else {
+                correctAnswerText = qObj.answer;
+            }
+
+            playArea.innerHTML =
+                '<div class="space-y-4 text-center">' +
+                '<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/20 border border-gold-500/40 text-gold-300 text-xs font-bold">' +
+                '<i data-lucide="shield-alert" class="w-4 h-4"></i> GAME MASTER ADMIN VIEW' +
+                '</div>' +
+                '<h3 class="font-cinzel text-xl font-bold text-slate-100">Monitoring Active Round</h3>' +
+                '<div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 text-left space-y-2">' +
+                '<p class="text-xs text-gold-400 font-bold uppercase">Prompt / Question:</p>' +
+                '<p class="text-sm text-slate-200">' + (qObj.q || qObj.prompt) + '</p>' +
+                '<div class="pt-3 border-t border-slate-800">' +
+                '<p class="text-xs text-emerald-400 font-bold uppercase">Correct Answer:</p>' +
+                '<p class="text-base font-bold text-emerald-300">' + correctAnswerText + '</p>' +
+                '</div>' +
+                '</div>' +
+                '<div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">' +
+                '<span class="text-xs text-slate-400">Current Phase: <strong class="text-gold-400 uppercase">' + phase + '</strong></span>' +
+                '<button onclick="forceNextQuestion()" class="px-4 py-2 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-lg text-xs">SKIP TO NEXT</button>' +
+                '</div>' +
+                '</div>';
+
+            lucide.createIcons();
+        }
+
+        function forceNextQuestion() {
+            if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
             const questionsList = roomData.gameQuestions || [];
             const nextQ = (roomData.currentQuestionIndex || 0) + 1;
 
             if (nextQ < questionsList.length) {
-              db.ref('rooms/' + currentRoomCode).update({
-                currentQuestionIndex: nextQ,
-                timer: 20,
-                phase: 'playing'
-              });
+                db.ref('rooms/' + currentRoomCode).update({
+                    currentQuestionIndex: nextQ,
+                    timer: 20,
+                    phase: 'playing'
+                });
             } else {
-              clearInterval(timerInterval);
-              db.ref('rooms/' + currentRoomCode + '/status').set('finished');
+                db.ref('rooms/' + currentRoomCode + '/status').set('finished');
             }
-          }
-        } else {
-          db.ref('rooms/' + currentRoomCode + '/timer').set(newTimer);
-        }
-      }, 1000);
-    }
-
-    // 6. GAME ENGINE & SPECTATOR ADMIN DASHBOARD
-    function launchGameEngine() {
-      showScreen('screen-game');
-      const gameMode = roomData.selectedGame || 'speed-blitz';
-      const qIndex = roomData.currentQuestionIndex || 0;
-      const questionsList = roomData.gameQuestions || MASTER_QUESTIONS[gameMode] || [];
-      const phase = roomData.phase || 'playing';
-      const isSpectatorHost = roomData.hostId === currentUser.id && roomData.hostIsSpectator;
-
-      document.getElementById('active-mode-title').innerText = gameMode.toUpperCase().replace('-', ' ');
-      document.getElementById('q-current').innerText = (qIndex + 1);
-      document.getElementById('q-total').innerText = questionsList.length;
-      document.getElementById('game-timer').innerText = (roomData.timer !== undefined ? roomData.timer : 20) + 's';
-
-      if (phase === 'revealing') {
-        document.getElementById('game-status-label').innerText = 'Answer Reveal in';
-        document.getElementById('timer-label').innerText = 'Reveal Countdown';
-      } else {
-        document.getElementById('game-status-label').innerText = 'Question';
-        document.getElementById('timer-label').innerText = 'Time Left';
-      }
-
-      if (isSpectatorHost) {
-        renderAdminDashboard(gameMode, qIndex, phase);
-      } else {
-        if (renderedQIndex !== qIndex || renderedPhase !== phase) {
-          renderedQIndex = qIndex;
-          renderedPhase = phase;
-          renderActiveQuestion(gameMode, qIndex, phase);
-        }
-      }
-
-      renderLiveStandings();
-    }
-
-    function renderAdminDashboard(mode, qIndex, phase) {
-      const playArea = document.getElementById('game-play-area');
-      const questionsList = roomData.gameQuestions || MASTER_QUESTIONS[mode] || [];
-      const qObj = questionsList[qIndex] || questionsList[0];
-
-      if (!qObj) return;
-
-      let correctAnswerText = '';
-      if (qObj.options !== undefined) {
-        correctAnswerText = qObj.options[qObj.correct];
-      } else {
-        correctAnswerText = qObj.answer;
-      }
-
-      playArea.innerHTML = 
-        '<div class="space-y-4 text-center">' +
-          '<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/20 border border-gold-500/40 text-gold-300 text-xs font-bold">' +
-            '<i data-lucide="shield-alert" class="w-4 h-4"></i> GAME MASTER ADMIN VIEW' +
-          '</div>' +
-          '<h3 class="font-cinzel text-xl font-bold text-slate-100">Monitoring Active Round</h3>' +
-          '<div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 text-left space-y-2">' +
-            '<p class="text-xs text-gold-400 font-bold uppercase">Prompt / Question:</p>' +
-            '<p class="text-sm text-slate-200">' + (qObj.q || qObj.prompt) + '</p>' +
-            '<div class="pt-3 border-t border-slate-800">' +
-              '<p class="text-xs text-emerald-400 font-bold uppercase">Correct Answer:</p>' +
-              '<p class="text-base font-bold text-emerald-300">' + correctAnswerText + '</p>' +
-            '</div>' +
-          '</div>' +
-          '<div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between">' +
-            '<span class="text-xs text-slate-400">Current Phase: <strong class="text-gold-400 uppercase">' + phase + '</strong></span>' +
-            '<button onclick="forceNextQuestion()" class="px-4 py-2 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-lg text-xs">SKIP TO NEXT</button>' +
-          '</div>' +
-        '</div>';
-
-      lucide.createIcons();
-    }
-
-    function forceNextQuestion() {
-      if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
-      const questionsList = roomData.gameQuestions || [];
-      const nextQ = (roomData.currentQuestionIndex || 0) + 1;
-
-      if (nextQ < questionsList.length) {
-        db.ref('rooms/' + currentRoomCode).update({
-          currentQuestionIndex: nextQ,
-          timer: 20,
-          phase: 'playing'
-        });
-      } else {
-        db.ref('rooms/' + currentRoomCode + '/status').set('finished');
-      }
-    }
-
-    function renderActiveQuestion(mode, qIndex, phase) {
-      const playArea = document.getElementById('game-play-area');
-      playArea.innerHTML = '';
-
-      const questionsList = roomData.gameQuestions || MASTER_QUESTIONS[mode] || [];
-      const qObj = questionsList[qIndex] || questionsList[0];
-
-      if (!qObj) return;
-
-      if (phase === 'revealing') {
-        let correctText = qObj.options ? qObj.options[qObj.correct] : qObj.answer;
-        playArea.innerHTML = 
-          '<div class="text-center py-8 space-y-4">' +
-            '<div class="text-4xl">✨</div>' +
-            '<h3 class="font-cinzel text-xl font-bold text-gold-400">TIME UP! ANSWER REVEALED</h3>' +
-            '<div class="p-4 bg-slate-950/80 rounded-2xl border border-emerald-500/40 max-w-md mx-auto space-y-1">' +
-              '<p class="text-xs text-slate-400 uppercase">Correct Answer</p>' +
-              '<p class="text-lg font-bold text-emerald-400">' + correctText + '</p>' +
-            '</div>' +
-            '<p class="text-xs text-slate-500 italic">Get ready for the next question...</p>' +
-          '</div>';
-        return;
-      }
-
-      if (mode === 'speed-blitz' || mode === 'history-timeline') {
-        let optionsHTML = '';
-        if (qObj.options) {
-          optionsHTML = qObj.options.map((optText, idx) => {
-            return '<button onclick="submitAnswer(' + (idx === qObj.correct) + ')" ' +
-              (hasAnsweredCurrentQ ? 'disabled ' : '') +
-              'class="w-full py-3.5 px-4 bg-slate-900 hover:bg-gold-500/20 border border-slate-700 hover:border-gold-400 font-semibold rounded-xl text-sm transition text-left flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed">' +
-              '<span>' + optText + '</span>' +
-              '<i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>' +
-            '</button>';
-          }).join('');
         }
 
-        playArea.innerHTML = 
-          '<div class="text-center space-y-4">' +
-            '<span class="text-xs font-bold uppercase tracking-widest text-amber-400">SELECT CORRECT REFERENCE</span>' +
-            '<blockquote class="text-base md:text-lg italic text-slate-200 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">' +
-              qObj.q +
-            '</blockquote>' +
-          '</div>' +
-          '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">' +
-            optionsHTML +
-          '</div>';
-      } else if (mode === 'word-scramble') {
-        playArea.innerHTML = 
-          '<div class="text-center space-y-4">' +
-            '<span class="text-xs font-bold uppercase tracking-widest text-amber-400">' + qObj.q + '</span>' +
-            '<div class="text-3xl font-mono font-extrabold tracking-widest text-gold-400 p-4 bg-slate-950/80 rounded-2xl border border-gold-500/30">' +
-              qObj.prompt +
-            '</div>' +
-            '<form onsubmit="handleWordSubmit(event, \'' + qObj.answer + '\')" class="max-w-xs mx-auto space-y-3 pt-2">' +
-              '<input type="text" id="input-answer" autocomplete="off" placeholder="TYPE UNSCRAMBLED WORD" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-center text-sm font-bold text-white outline-none uppercase focus:border-gold-400" />' +
-              '<button type="submit" ' + (hasAnsweredCurrentQ ? 'disabled ' : '') + 'class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs disabled:opacity-50">SUBMIT ANSWER</button>' +
-            '</form>' +
-          '</div>';
-      } else if (mode === 'gospel-wordle') {
-        playArea.innerHTML = 
-          '<div class="text-center space-y-4">' +
-            '<span class="text-xs font-bold uppercase tracking-widest text-amber-400">' + qObj.q + '</span>' +
-            '<p class="text-xs text-slate-300 italic bg-slate-950/60 p-3 rounded-xl border border-slate-800">Hint: ' + qObj.hint + '</p>' +
-            '<form onsubmit="handleWordSubmit(event, \'' + qObj.answer + '\')" class="max-w-xs mx-auto space-y-3 pt-2">' +
-              '<input type="text" id="input-answer" maxlength="10" autocomplete="off" placeholder="5-LETTER WORD" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-center font-mono text-lg font-bold text-gold-400 outline-none uppercase tracking-widest focus:border-gold-400" />' +
-              '<button type="submit" ' + (hasAnsweredCurrentQ ? 'disabled ' : '') + 'class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs disabled:opacity-50">SUBMIT GUESS</button>' +
-            '</form>' +
-          '</div>';
-      }
+        function renderActiveQuestion(mode, qIndex, phase) {
+            const playArea = document.getElementById('game-play-area');
+            playArea.innerHTML = '';
 
-      lucide.createIcons();
-    }
+            const questionsList = roomData.gameQuestions || MASTER_QUESTIONS[mode] || [];
+            const qObj = questionsList[qIndex] || questionsList[0];
 
-    function handleWordSubmit(e, correctAnswer) {
-      e.preventDefault();
-      const inputEl = document.getElementById('input-answer');
-      if (!inputEl) return;
-      const guess = inputEl.value.trim().toUpperCase();
-      submitAnswer(guess === correctAnswer);
-    }
+            if (!qObj) return;
 
-    function submitAnswer(isCorrect) {
-      if (hasAnsweredCurrentQ) return;
-      hasAnsweredCurrentQ = true;
+            if (phase === 'revealing') {
+                let correctText = qObj.options ? qObj.options[qObj.correct] : qObj.answer;
+                playArea.innerHTML =
+                    '<div class="text-center py-8 space-y-4">' +
+                    '<div class="text-4xl">✨</div>' +
+                    '<h3 class="font-cinzel text-xl font-bold text-gold-400">TIME UP! ANSWER REVEALED</h3>' +
+                    '<div class="p-4 bg-slate-950/80 rounded-2xl border border-emerald-500/40 max-w-md mx-auto space-y-1">' +
+                    '<p class="text-xs text-slate-400 uppercase">Correct Answer</p>' +
+                    '<p class="text-lg font-bold text-emerald-400">' + correctText + '</p>' +
+                    '</div>' +
+                    '<p class="text-xs text-slate-500 italic">Get ready for the next question...</p>' +
+                    '</div>';
+                return;
+            }
 
-      if (isCorrect) {
-        alert('✨ Correct! Your team earns 10 points.');
-        if (currentRoomCode) {
-          const currentScore = (roomData.players[currentUser.id] && roomData.players[currentUser.id].score) || 0;
-          db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id + '/score').set(currentScore + 10);
+            if (mode === 'speed-blitz' || mode === 'history-timeline') {
+                let optionsHTML = '';
+                if (qObj.options) {
+                    optionsHTML = qObj.options.map((optText, idx) => {
+                        return '<button onclick="submitAnswer(' + (idx === qObj.correct) + ')" ' +
+                            (hasAnsweredCurrentQ ? 'disabled ' : '') +
+                            'class="w-full py-3.5 px-4 bg-slate-900 hover:bg-gold-500/20 border border-slate-700 hover:border-gold-400 font-semibold rounded-xl text-sm transition text-left flex items-center justify-between disabled:opacity-50 disabled:cursor-not-allowed">' +
+                            '<span>' + optText + '</span>' +
+                            '<i data-lucide="chevron-right" class="w-4 h-4 text-slate-500"></i>' +
+                            '</button>';
+                    }).join('');
+                }
+
+                playArea.innerHTML =
+                    '<div class="text-center space-y-4">' +
+                    '<span class="text-xs font-bold uppercase tracking-widest text-amber-400">SELECT CORRECT REFERENCE</span>' +
+                    '<blockquote class="text-base md:text-lg italic text-slate-200 bg-slate-950/60 p-5 rounded-2xl border border-slate-800">' +
+                    qObj.q +
+                    '</blockquote>' +
+                    '</div>' +
+                    '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">' +
+                    optionsHTML +
+                    '</div>';
+            } else if (mode === 'word-scramble') {
+                playArea.innerHTML =
+                    '<div class="text-center space-y-4">' +
+                    '<span class="text-xs font-bold uppercase tracking-widest text-amber-400">' + qObj.q + '</span>' +
+                    '<div class="text-2xl sm:text-3xl font-mono font-extrabold tracking-widest text-gold-400 p-4 bg-slate-950/80 rounded-2xl border border-gold-500/30 break-words">' +
+                    qObj.prompt +
+                    '</div>' +
+                    '<form onsubmit="handleWordSubmit(event, \'' + qObj.answer + '\')" class="max-w-xs mx-auto space-y-3 pt-2">' +
+                    '<input type="text" id="input-answer" autocomplete="off" placeholder="TYPE UNSCRAMBLED WORD" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-center text-sm font-bold text-white outline-none uppercase focus:border-gold-400" />' +
+                    '<button type="submit" ' + (hasAnsweredCurrentQ ? 'disabled ' : '') + 'class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs disabled:opacity-50">SUBMIT ANSWER</button>' +
+                    '</form>' +
+                    '</div>';
+            } else if (mode === 'gospel-wordle') {
+                playArea.innerHTML =
+                    '<div class="text-center space-y-4">' +
+                    '<span class="text-xs font-bold uppercase tracking-widest text-amber-400">' + qObj.q + '</span>' +
+                    '<p class="text-xs text-slate-300 italic bg-slate-950/60 p-3 rounded-xl border border-slate-800">Hint: ' + qObj.hint + '</p>' +
+                    '<form onsubmit="handleWordSubmit(event, \'' + qObj.answer + '\')" class="max-w-xs mx-auto space-y-3 pt-2">' +
+                    '<input type="text" id="input-answer" maxlength="10" autocomplete="off" placeholder="5-LETTER WORD" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-center font-mono text-lg font-bold text-gold-400 outline-none uppercase tracking-widest focus:border-gold-400" />' +
+                    '<button type="submit" ' + (hasAnsweredCurrentQ ? 'disabled ' : '') + 'class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs disabled:opacity-50">SUBMIT GUESS</button>' +
+                    '</form>' +
+                    '</div>';
+            }
+
+            lucide.createIcons();
         }
-      } else {
-        alert('❌ Incorrect choice!');
-      }
-    }
 
-    function renderLiveStandings() {
-      const container = document.getElementById('live-standings');
-      container.innerHTML = '';
-
-      const players = roomData && roomData.players ? Object.values(roomData.players) : [];
-
-      TEAMS.forEach(team => {
-        const teamPlayers = players.filter(p => p.team === team.id);
-        const teamScore = teamPlayers.reduce((sum, p) => sum + (p.score || 0), 0);
-
-        const card = document.createElement('div');
-        card.className = 'p-3 rounded-xl bg-slate-950/80 border ' + team.border + ' text-center';
-        card.innerHTML = 
-          '<p class="text-[10px] font-bold uppercase ' + team.color + '">' + team.name + '</p>' +
-          '<p class="text-lg font-bold font-mono text-slate-100">' + teamScore + ' pts</p>';
-        container.appendChild(card);
-      });
-    }
-
-    function renderVictoryScreen() {
-      showScreen('screen-game');
-      const playArea = document.getElementById('game-play-area');
-      const players = roomData && roomData.players ? Object.values(roomData.players) : [];
-      const isHost = roomData.hostId === currentUser.id;
-
-      let topTeam = TEAMS[0];
-      let maxScore = -1;
-
-      TEAMS.forEach(team => {
-        const teamPlayers = players.filter(p => p.team === team.id);
-        const score = teamPlayers.reduce((sum, p) => sum + (p.score || 0), 0);
-        if (score > maxScore) {
-          maxScore = score;
-          topTeam = team;
+        function handleWordSubmit(e, correctAnswer) {
+            e.preventDefault();
+            const inputEl = document.getElementById('input-answer');
+            if (!inputEl) return;
+            const guess = inputEl.value.trim().toUpperCase().replace(/\s+/g, '');
+            const cleanTarget = correctAnswer.toUpperCase().replace(/\s+/g, '');
+            submitAnswer(guess === cleanTarget);
         }
-      });
 
-      playArea.innerHTML = 
-        '<div class="text-center py-8 space-y-4">' +
-          '<div class="text-5xl animate-bounce">🏆</div>' +
-          '<h2 class="font-cinzel text-2xl font-bold text-gold-400">QUEST COMPLETED</h2>' +
-          '<p class="text-xs text-slate-300">VICTORIOUS DIVISION:</p>' +
-          '<div class="text-xl font-bold font-cinzel ' + topTeam.color + ' p-4 bg-slate-950/80 rounded-2xl border ' + topTeam.border + ' max-w-xs mx-auto">' +
-            topTeam.name + ' (' + maxScore + ' pts)' +
-          '</div>' +
-          '<div class="flex flex-col sm:flex-row gap-3 justify-center pt-4 max-w-xs mx-auto">' +
-            (isHost ? 
-              '<button onclick="resetToLobby()" class="flex-1 py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs font-cinzel tracking-wider shadow-lg">RETURN TO LOBBY</button>' : 
-              '<p class="text-xs text-slate-400 italic">Waiting for host to return to lobby...</p>'
-            ) +
-            '<button onclick="goHome()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs">MAIN MENU</button>' +
-          '</div>' +
-        '</div>';
+        function submitAnswer(isCorrect) {
+            if (hasAnsweredCurrentQ) return;
+            hasAnsweredCurrentQ = true;
 
-      renderLiveStandings();
-    }
-  </script>
+            if (isCorrect) {
+                alert('✨ Correct! Your team earns 10 points.');
+                if (currentRoomCode) {
+                    const currentScore = (roomData.players[currentUser.id] && roomData.players[currentUser.id].score) || 0;
+                    db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id + '/score').set(currentScore + 10);
+                }
+            } else {
+                alert('❌ Incorrect choice!');
+            }
+        }
+
+        function renderLiveStandings() {
+            const container = document.getElementById('live-standings');
+            container.innerHTML = '';
+
+            const players = roomData && roomData.players ? Object.values(roomData.players) : [];
+
+            TEAMS.forEach(team => {
+                const teamPlayers = players.filter(p => p.team === team.id);
+                const teamScore = teamPlayers.reduce((sum, p) => sum + (p.score || 0), 0);
+
+                const card = document.createElement('div');
+                card.className = 'p-3 rounded-xl bg-slate-950/80 border ' + team.border + ' text-center';
+                card.innerHTML =
+                    '<p class="text-[10px] font-bold uppercase ' + team.color + '">' + team.name + '</p>' +
+                    '<p class="text-lg font-bold font-mono text-slate-100">' + teamScore + ' pts</p>';
+                container.appendChild(card);
+            });
+        }
+
+        function renderVictoryScreen() {
+            showScreen('screen-game');
+            const playArea = document.getElementById('game-play-area');
+            const players = roomData && roomData.players ? Object.values(roomData.players) : [];
+            const isHost = roomData.hostId === currentUser.id;
+
+            let topTeam = TEAMS[0];
+            let maxScore = -1;
+
+            TEAMS.forEach(team => {
+                const teamPlayers = players.filter(p => p.team === team.id);
+                const score = teamPlayers.reduce((sum, p) => sum + (p.score || 0), 0);
+                if (score > maxScore) {
+                    maxScore = score;
+                    topTeam = team;
+                }
+            });
+
+            playArea.innerHTML =
+                '<div class="text-center py-8 space-y-4">' +
+                '<div class="text-5xl animate-bounce">🏆</div>' +
+                '<h2 class="font-cinzel text-2xl font-bold text-gold-400">QUEST COMPLETED</h2>' +
+                '<p class="text-xs text-slate-300">VICTORIOUS DIVISION:</p>' +
+                '<div class="text-xl font-bold font-cinzel ' + topTeam.color + ' p-4 bg-slate-950/80 rounded-2xl border ' + topTeam.border + ' max-w-xs mx-auto">' +
+                topTeam.name + ' (' + maxScore + ' pts)' +
+                '</div>' +
+                '<div class="flex flex-col sm:flex-row gap-3 justify-center pt-4 max-w-xs mx-auto">' +
+                (isHost ?
+                    '<button onclick="resetToLobby()" class="flex-1 py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs font-cinzel tracking-wider shadow-lg">RETURN TO LOBBY</button>' :
+                    '<p class="text-xs text-slate-400 italic">Waiting for host to return to lobby...</p>'
+                ) +
+                '<button onclick="goHome()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs">MAIN MENU</button>' +
+                '</div>' +
+                '</div>';
+
+            renderLiveStandings();
+        }
+    </script>
 </body>
 </html>
