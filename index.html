@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Scripture Quest: LDS Team Edition</title>
+    <title>Scripture Quest: Ultimate LDS Team Edition</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -51,8 +51,29 @@
             box-shadow: 0 0 25px rgba(234, 179, 8, 0.25);
         }
 
+        .fog-overlay {
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(20px);
+        }
+
         input {
             color: #ffffff !important;
+        }
+
+        @keyframes flamePulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.8));
+            }
+
+            50% {
+                transform: scale(1.08);
+                filter: drop-shadow(0 0 15px rgba(249, 115, 22, 1));
+            }
+        }
+
+        .flame-active {
+            animation: flamePulse 1.2s infinite ease-in-out;
         }
     </style>
 </head>
@@ -136,7 +157,7 @@
         <section id="screen-menu" class="hidden w-full max-w-4xl space-y-6">
             <div class="glass-card p-6 md:p-8 rounded-3xl border border-gold-500/20 text-center relative overflow-hidden">
                 <h2 class="font-cinzel text-2xl md:text-3xl font-extrabold text-gold-400 mb-2">WELCOME TO THE SCRIPTURE SUITE</h2>
-                <p class="text-sm text-slate-300 max-w-xl mx-auto mb-6">Gather your group, join a room, and compete live in team scriptural challenges with power-ups and speed bonuses.</p>
+                <p class="text-sm text-slate-300 max-w-xl mx-auto mb-6">Gather your group, join a room, and compete live in team scriptural challenges with power-ups, sabotage, and final buzzer rounds.</p>
 
                 <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
                     <button onclick="showHostModal()" class="flex-1 py-4 px-6 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-slate-950 font-bold rounded-2xl shadow-xl flex items-center justify-center gap-3 transition">
@@ -161,7 +182,7 @@
                             <div class="p-2.5 rounded-xl bg-amber-500/10 text-amber-400"><i data-lucide="zap" class="w-5 h-5"></i></div>
                             <h4 class="font-bold text-slate-100">Doctrinal Mastery Speed Blitz (20 Qs)</h4>
                         </div>
-                        <p class="text-xs text-slate-400">Fast-paced multiple-choice speed rounds with power-ups and speed multipliers.</p>
+                        <p class="text-xs text-slate-400">Fast-paced speed rounds featuring power-ups, fog sabotage, and a final 3-question Buzzer Showdown.</p>
                     </div>
 
                     <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
@@ -258,7 +279,14 @@
         </section>
 
         <!-- 5. ACTIVE GAME ENGINE SCREEN -->
-        <section id="screen-game" class="hidden w-full max-w-4xl space-y-6">
+        <section id="screen-game" class="hidden w-full max-w-4xl space-y-6 relative">
+            <!-- FOG SABOTAGE OVERLAY -->
+            <div id="fog-overlay" class="hidden absolute inset-0 z-40 fog-overlay rounded-3xl flex flex-col items-center justify-center text-center p-6 space-y-3">
+                <div class="text-5xl animate-bounce">🌫️</div>
+                <h3 class="font-cinzel text-2xl font-bold text-slate-200">RIVAL FOG SABOTAGE!</h3>
+                <p class="text-xs text-slate-400 max-w-xs">A rival team cast a Fog Bomb on your view screen!</p>
+            </div>
+
             <div class="bg-slate-900/90 border border-gold-500/30 p-4 md:p-6 rounded-3xl flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <span class="text-2xl" id="game-mode-icon">⚡</span>
@@ -277,6 +305,9 @@
                         <button onclick="usePowerUp('shield')" id="pw-shield" title="50/50 Eliminator" class="px-2.5 py-1.5 bg-blue-500/20 border border-blue-500/40 text-blue-300 text-xs font-bold rounded-xl hover:bg-blue-500/30 transition flex items-center gap-1">
                             🛡️ 50/50 <span id="count-shield" class="text-[10px] bg-blue-500 text-slate-950 px-1 rounded-full">1</span>
                         </button>
+                        <button onclick="usePowerUp('fog')" id="pw-fog" title="Fog Sabotage Rivals" class="px-2.5 py-1.5 bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-bold rounded-xl hover:bg-purple-500/30 transition flex items-center gap-1">
+                            🌫️ Fog <span id="count-fog" class="text-[10px] bg-purple-500 text-slate-950 px-1 rounded-full">1</span>
+                        </button>
                     </div>
 
                     <div class="text-right">
@@ -293,8 +324,9 @@
 
             <!-- LIVE SCOREBOARD -->
             <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl">
-                <h4 class="text-xs font-bold uppercase text-slate-400 mb-3 flex items-center gap-2">
-                    <i data-lucide="trophy" class="w-4 h-4 text-gold-400"></i> LIVE TEAM STANDINGS
+                <h4 class="text-xs font-bold uppercase text-slate-400 mb-3 flex items-center justify-between">
+                    <span class="flex items-center gap-2"><i data-lucide="trophy" class="w-4 h-4 text-gold-400"></i> LIVE TEAM STANDINGS</span>
+                    <span id="streak-indicator" class="hidden text-amber-400 font-bold text-[11px] flame-active">🔥 STREAK MULTIPLIER ACTIVE</span>
                 </h4>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="live-standings">
                     <!-- STANDINGS INJECTED HERE -->
@@ -369,11 +401,8 @@
         let renderedQIndex = -1;
         let renderedPhase = null;
 
-        // Power-up inventory per game
-        let powerUps = { double: 1, shield: 1 };
-        let activePowerUp = null; // 'double'
-
-        // Streak & Stats tracking
+        let powerUps = { double: 1, shield: 1, fog: 1 };
+        let activePowerUp = null;
         let currentStreak = 0;
         let totalCorrectAnswers = 0;
 
@@ -388,8 +417,8 @@
             gain.connect(audioCtx.destination);
 
             if (type === 'correct') {
-                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-                osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1); // A5
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1);
                 gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
                 osc.start();
@@ -403,6 +432,13 @@
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.3);
                 if (navigator.vibrate) navigator.vibrate([40, 40, 40]);
+            } else if (type === 'buzzer') {
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(1200, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
             } else if (type === 'victory') {
                 [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
                     const o = audioCtx.createOscillator();
@@ -479,24 +515,14 @@
                 { q: 'Which event occurred LAST in Church History?', options: ['Publication of Book of Mormon', 'The First Vision', 'Exodus to Utah Territory', 'Martyrdom at Carthage Jail'], correct: 2 },
                 { q: 'Year the Church was officially organized in Fayette, NY:', options: ['1830', '1820', '1844', '1847'], correct: 0 },
                 { q: 'Year Joseph Smith had the First Vision:', options: ['1820', '1830', '1823', '1838'], correct: 0 },
-                { q: 'Year the Mormon Pioneers entered the Salt Lake Valley:', options: ['1847', '1830', '1850', '1860'], correct: 0 },
-                { q: 'Which Temple was dedicated FIRST in this dispensation?', options: ['Kirtland Temple', 'Nauvoo Temple', 'Salt Lake Temple', 'St. George Temple'], correct: 0 },
-                { q: 'Who served as the Second President of the Church?', options: ['Brigham Young', 'John Taylor', 'Wilford Woodruff', 'Lorenzo Snow'], correct: 0 },
-                { q: 'In which city were the Gold Plates translated mainly?', options: ['Harmony, PA & Fayette, NY', 'Nauvoo, IL', 'Salt Lake City, UT', 'Kirtland, OH'], correct: 0 },
-                { q: 'Primary scribe for the translation of the Book of Mormon:', options: ['Oliver Cowdery', 'Martin Harris', 'David Whitmer', 'Hyrum Smith'], correct: 0 },
-                { q: 'Where was the Female Relief Society first organized?', options: ['Nauvoo, Illinois', 'Kirtland, Ohio', 'Fayette, New York', 'Independence, Missouri'], correct: 0 }
+                { q: 'Year the Mormon Pioneers entered the Salt Lake Valley:', options: ['1847', '1830', '1850', '1860'], correct: 0 }
             ],
             'gospel-wordle': [
                 { q: '5-Letter Gospel Vocabulary', hint: 'First principle of the Gospel.', answer: 'FAITH' },
                 { q: '5-Letter Gospel Vocabulary', hint: 'Sacred house of the Lord.', answer: 'TEMPLE' },
                 { q: '5-Letter Gospel Vocabulary', hint: 'Unmerited divine help and favor.', answer: 'GRACE' },
                 { q: '5-Letter Gospel Vocabulary', hint: 'To make at-one with God through Christ.', answer: 'ATONE' },
-                { q: '5-Letter Gospel Vocabulary', hint: 'Book of Mormon Prophet and Judge.', answer: 'ALMA' },
-                { q: '5-Letter Gospel Vocabulary', hint: 'Light of Christ that fills the world.', answer: 'LIGHT' },
-                { q: '5-Letter Gospel Vocabulary', hint: 'Gospel knowledge opposing falsehood.', answer: 'TRUTH' },
-                { q: '5-Letter Gospel Vocabulary', hint: 'Opposite of pride, necessary for baptism.', answer: 'MEEK' },
-                { q: '5-Letter Gospel Vocabulary', hint: 'Deep spiritual feeling of happiness.', answer: 'JOY' },
-                { q: '5-Letter Gospel Vocabulary', hint: 'Prophet who prayed all day and night.', answer: 'ENOS' }
+                { q: '5-Letter Gospel Vocabulary', hint: 'Book of Mormon Prophet and Judge.', answer: 'ALMA' }
             ]
         };
 
@@ -593,8 +619,7 @@
             roomRef = db.ref('rooms/' + currentRoomCode);
             const isSpectator = document.getElementById('check-spectator').checked;
 
-            // Reset power-ups on new room
-            powerUps = { double: 1, shield: 1 };
+            powerUps = { double: 1, shield: 1, fog: 1 };
             currentStreak = 0;
             totalCorrectAnswers = 0;
 
@@ -606,6 +631,7 @@
                 currentQuestionIndex: 0,
                 timer: 20,
                 phase: 'playing',
+                buzzerTeam: null,
                 players: isSpectator ? {} : {
                     [currentUser.id]: {
                         id: currentUser.id,
@@ -635,7 +661,7 @@
             currentRoomCode = codeInput;
             roomRef = db.ref('rooms/' + currentRoomCode);
 
-            powerUps = { double: 1, shield: 1 };
+            powerUps = { double: 1, shield: 1, fog: 1 };
             currentStreak = 0;
             totalCorrectAnswers = 0;
 
@@ -682,6 +708,17 @@
                     alert('You were removed from the room.');
                     leaveRoom();
                     return;
+                }
+
+                if (roomData.foggedTeam && !isHostSpectator && roomData.players[currentUser.id]) {
+                    const myTeam = roomData.players[currentUser.id].team;
+                    if (roomData.foggedTeam === myTeam) {
+                        document.getElementById('fog-overlay').classList.remove('hidden');
+                    } else {
+                        document.getElementById('fog-overlay').classList.add('hidden');
+                    }
+                } else {
+                    document.getElementById('fog-overlay').classList.add('hidden');
                 }
 
                 if (roomData.status === 'lobby') {
@@ -820,6 +857,8 @@
             updates['rooms/' + currentRoomCode + '/currentQuestionIndex'] = 0;
             updates['rooms/' + currentRoomCode + '/timer'] = 20;
             updates['rooms/' + currentRoomCode + '/phase'] = 'playing';
+            updates['rooms/' + currentRoomCode + '/foggedTeam'] = null;
+            updates['rooms/' + currentRoomCode + '/buzzerTeam'] = null;
 
             db.ref().update(updates);
         }
@@ -846,7 +885,7 @@
                 }));
             }
 
-            powerUps = { double: 1, shield: 1 };
+            powerUps = { double: 1, shield: 1, fog: 1 };
             currentStreak = 0;
             totalCorrectAnswers = 0;
 
@@ -855,6 +894,8 @@
                 currentQuestionIndex: 0,
                 timer: 20,
                 phase: 'playing',
+                foggedTeam: null,
+                buzzerTeam: null,
                 gameQuestions: randomizedQuestions
             });
             startHostTimer();
@@ -874,10 +915,11 @@
                 let newTimer = currentTimer - 1;
 
                 if (newTimer <= 0) {
-                    if (currentPhase === 'playing') {
+                    if (currentPhase === 'playing' || currentPhase === 'buzzer-active') {
                         db.ref('rooms/' + currentRoomCode).update({
                             phase: 'revealing',
-                            timer: 5
+                            timer: 5,
+                            foggedTeam: null
                         });
                     } else if (currentPhase === 'revealing') {
                         const questionsList = roomData.gameQuestions || [];
@@ -887,7 +929,9 @@
                             db.ref('rooms/' + currentRoomCode).update({
                                 currentQuestionIndex: nextQ,
                                 timer: 20,
-                                phase: 'playing'
+                                phase: 'playing',
+                                buzzerTeam: null,
+                                foggedTeam: null
                             });
                         } else {
                             clearInterval(timerInterval);
@@ -900,7 +944,7 @@
             }, 1000);
         }
 
-        // 5. POWER-UPS IMPLEMENTATION
+        // 5. POWER-UPS & SABOTAGE
         function usePowerUp(type) {
             if (hasAnsweredCurrentQ || powerUps[type] <= 0) return;
             powerUps[type]--;
@@ -910,7 +954,6 @@
                 activePowerUp = 'double';
                 alert('⚡ Double Points (2x) activated for this question!');
             } else if (type === 'shield') {
-                // 50/50: remove 2 wrong multiple-choice options or reveal first letter
                 const gameMode = roomData.selectedGame;
                 if (gameMode === 'speed-blitz' || gameMode === 'history-timeline') {
                     const buttons = document.querySelectorAll('#game-play-area button');
@@ -923,16 +966,42 @@
                             hiddenCount++;
                         }
                     });
-                } else if (gameMode === 'word-scramble' || gameMode === 'gospel-wordle') {
+                } else {
                     const qIndex = roomData.currentQuestionIndex || 0;
                     const qList = roomData.gameQuestions || [];
                     const target = qList[qIndex].answer;
                     alert('🛡️ Hint: Word starts with "' + target[0] + '"');
                 }
+            } else if (type === 'fog') {
+                const players = roomData.players ? Object.values(roomData.players) : [];
+                let leadTeam = TEAMS[0].id;
+                let maxScore = -1;
+                TEAMS.forEach(t => {
+                    const score = players.filter(p => p.team === t.id).reduce((s, p) => s + (p.score || 0), 0);
+                    if (score > maxScore) { maxScore = score; leadTeam = t.id; }
+                });
+
+                db.ref('rooms/' + currentRoomCode + '/foggedTeam').set(leadTeam);
+                setTimeout(() => {
+                    if (currentRoomCode) db.ref('rooms/' + currentRoomCode + '/foggedTeam').set(null);
+                }, 4000);
+                alert('🌫️ Fog Sabotage cast on the 1st Place Team!');
             }
         }
 
-        // 6. GAME ENGINE
+        function triggerBuzzer() {
+            if (!currentRoomCode || roomData.buzzerTeam || !roomData.players[currentUser.id]) return;
+            const myTeam = roomData.players[currentUser.id].team;
+            playSound('buzzer');
+
+            db.ref('rooms/' + currentRoomCode).update({
+                buzzerTeam: myTeam,
+                phase: 'buzzer-active',
+                timer: 5
+            });
+        }
+
+        // 6. GAME ENGINE & DASHBOARDS
         function launchGameEngine() {
             showScreen('screen-game');
             const gameMode = roomData.selectedGame || 'speed-blitz';
@@ -940,18 +1009,25 @@
             const questionsList = roomData.gameQuestions || MASTER_QUESTIONS[gameMode] || [];
             const phase = roomData.phase || 'playing';
             const isSpectatorHost = roomData.hostId === currentUser.id && roomData.hostIsSpectator;
+            const isBuzzerRound = qIndex >= 17;
 
-            document.getElementById('active-mode-title').innerText = gameMode.toUpperCase().replace('-', ' ');
+            document.getElementById('active-mode-title').innerText = isBuzzerRound ? '⚡ SHOWDOWN BUZZER ROUND' : gameMode.toUpperCase().replace('-', ' ');
             document.getElementById('q-current').innerText = (qIndex + 1);
             document.getElementById('q-total').innerText = questionsList.length;
             document.getElementById('game-timer').innerText = (roomData.timer !== undefined ? roomData.timer : 20) + 's';
+
+            if (currentStreak >= 2) {
+                document.getElementById('streak-indicator').classList.remove('hidden');
+            } else {
+                document.getElementById('streak-indicator').classList.add('hidden');
+            }
 
             if (phase === 'revealing') {
                 document.getElementById('game-status-label').innerText = 'Answer Reveal in';
                 document.getElementById('timer-label').innerText = 'Reveal Countdown';
                 document.getElementById('powerups-container').classList.add('hidden');
             } else {
-                document.getElementById('game-status-label').innerText = 'Question';
+                document.getElementById('game-status-label').innerText = isBuzzerRound ? 'Showdown Q' : 'Question';
                 document.getElementById('timer-label').innerText = 'Time Left';
                 document.getElementById('powerups-container').classList.remove('hidden');
             }
@@ -962,7 +1038,7 @@
                 if (renderedQIndex !== qIndex || renderedPhase !== phase) {
                     renderedQIndex = qIndex;
                     renderedPhase = phase;
-                    renderActiveQuestion(gameMode, qIndex, phase);
+                    renderActiveQuestion(gameMode, qIndex, phase, isBuzzerRound);
                 }
             }
 
@@ -1009,14 +1085,15 @@
                 db.ref('rooms/' + currentRoomCode).update({
                     currentQuestionIndex: nextQ,
                     timer: 20,
-                    phase: 'playing'
+                    phase: 'playing',
+                    buzzerTeam: null
                 });
             } else {
                 db.ref('rooms/' + currentRoomCode + '/status').set('finished');
             }
         }
 
-        function renderActiveQuestion(mode, qIndex, phase) {
+        function renderActiveQuestion(mode, qIndex, phase, isBuzzerRound) {
             const playArea = document.getElementById('game-play-area');
             playArea.innerHTML = '';
 
@@ -1037,6 +1114,44 @@
                     '<p class="text-xs text-slate-500 italic">Get ready for the next question...</p>' +
                     '</div>';
                 return;
+            }
+
+            if (isBuzzerRound) {
+                const buzzerTeam = roomData.buzzerTeam;
+                const myTeam = roomData.players[currentUser.id] ? roomData.players[currentUser.id].team : null;
+
+                if (!buzzerTeam) {
+                    playArea.innerHTML =
+                        '<div class="text-center py-6 space-y-6">' +
+                        '<span class="text-xs font-bold uppercase tracking-widest text-amber-400">FINAL SHOWDOWN: TAP BUZZER FIRST!</span>' +
+                        '<blockquote class="text-base italic text-slate-200 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">' + (qObj.q || qObj.prompt) + '</blockquote>' +
+                        '<button onclick="triggerBuzzer()" class="w-40 h-40 mx-auto rounded-full bg-gradient-to-br from-red-500 via-rose-600 to-amber-700 hover:scale-105 active:scale-95 transition flex items-center justify-center font-cinzel text-2xl font-black text-white shadow-2xl border-4 border-amber-400">' +
+                        'BUZZ IN!' +
+                        '</button>' +
+                        '</div>';
+                    return;
+                } else if (buzzerTeam === myTeam) {
+                    let optionsHTML = '';
+                    if (qObj.options) {
+                        optionsHTML = qObj.options.map((optText, idx) => {
+                            return '<button onclick="submitAnswer(' + (idx === qObj.correct) + ', true)" class="w-full py-3 px-4 bg-slate-900 hover:bg-gold-500/20 border border-slate-700 font-semibold rounded-xl text-xs text-left">' + optText + '</button>';
+                        }).join('');
+                    }
+                    playArea.innerHTML =
+                        '<div class="text-center space-y-4">' +
+                        '<span class="text-xs font-bold uppercase tracking-widest text-emerald-400">YOUR TEAM BUZZED IN! ANSWER QUICKLY:</span>' +
+                        '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">' + optionsHTML + '</div>' +
+                        '</div>';
+                    return;
+                } else {
+                    playArea.innerHTML =
+                        '<div class="text-center py-8 space-y-3">' +
+                        '<div class="text-3xl">🔔</div>' +
+                        '<h3 class="font-cinzel text-lg font-bold text-amber-400">' + buzzerTeam.toUpperCase() + ' BUZZED IN FIRST!</h3>' +
+                        '<p class="text-xs text-slate-400">Waiting for them to submit their answer...</p>' +
+                        '</div>';
+                    return;
+                }
             }
 
             if (mode === 'speed-blitz' || mode === 'history-timeline') {
@@ -1098,7 +1213,7 @@
             submitAnswer(guess === cleanTarget);
         }
 
-        function submitAnswer(isCorrect) {
+        function submitAnswer(isCorrect, isBuzzerRound = false) {
             if (hasAnsweredCurrentQ) return;
             hasAnsweredCurrentQ = true;
 
@@ -1107,10 +1222,9 @@
                 currentStreak++;
                 totalCorrectAnswers++;
 
-                // Calculate points with speed bonus + streak multiplier + 2x power-up
-                let points = 10;
+                let points = isBuzzerRound ? 20 : 10;
                 const timeLeft = roomData.timer !== undefined ? roomData.timer : 20;
-                if (timeLeft >= 10) points += 5; // Speed bonus
+                if (!isBuzzerRound && timeLeft >= 10) points += 5;
 
                 let multiplier = 1.0;
                 if (currentStreak >= 5) multiplier = 2.0;
@@ -1133,7 +1247,16 @@
             } else {
                 playSound('incorrect');
                 currentStreak = 0;
-                alert('❌ Incorrect choice! Streak reset.');
+
+                if (isBuzzerRound) {
+                    alert('❌ Incorrect! Buzzer Penalty (-10 pts)');
+                    if (currentRoomCode) {
+                        const currentScore = (roomData.players[currentUser.id] && roomData.players[currentUser.id].score) || 0;
+                        db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id + '/score').set(Math.max(0, currentScore - 10));
+                    }
+                } else {
+                    alert('❌ Incorrect choice!');
+                }
             }
         }
 
@@ -1156,45 +1279,116 @@
             });
         }
 
+        // 7. TEAM PODIUM WITH INDIVIDUAL PLAYER CONTRIBUTIONS
         function renderVictoryScreen() {
             showScreen('screen-game');
             const playArea = document.getElementById('game-play-area');
             const players = roomData && roomData.players ? Object.values(roomData.players) : [];
             const isHost = roomData.hostId === currentUser.id;
 
-            let topTeam = TEAMS[0];
-            let maxScore = -1;
-
-            TEAMS.forEach(team => {
+            // Group & calculate total team scores and member rosters
+            let sortedTeams = TEAMS.map(team => {
                 const teamPlayers = players.filter(p => p.team === team.id);
-                const score = teamPlayers.reduce((sum, p) => sum + (p.score || 0), 0);
-                if (score > maxScore) {
-                    maxScore = score;
-                    topTeam = team;
+                const teamScore = teamPlayers.reduce((sum, p) => sum + (p.score || 0), 0);
+
+                // Sort players within team by contribution score
+                const sortedMembers = [...teamPlayers].sort((a, b) => (b.score || 0) - (a.score || 0));
+                return { ...team, teamScore, members: sortedMembers };
+            }).sort((a, b) => b.teamScore - a.teamScore);
+
+            const team1st = sortedTeams[0];
+            const team2nd = sortedTeams[1];
+            const team3rd = sortedTeams[2];
+
+            function renderPlayerRosterHTML(members, colorClass) {
+                if (!members || members.length === 0) {
+                    return '<p class="text-[10px] text-slate-500 italic">No Players</p>';
                 }
-            });
+                return members.map(m => {
+                    return '<div class="flex items-center justify-between text-[11px] bg-slate-950/70 p-1.5 px-2 rounded-lg border border-slate-800/80 mb-1">' +
+                        '<span class="truncate max-w-[100px] text-slate-200 font-medium">' + m.avatar + ' ' + m.name + '</span>' +
+                        '<span class="font-mono font-bold ' + colorClass + '">+' + (m.score || 0) + '</span>' +
+                        '</div>';
+                }).join('');
+            }
+
+            const questionsList = roomData.gameQuestions || [];
+            let reviewHTML = questionsList.map((q, idx) => {
+                let correctText = q.options ? q.options[q.correct] : q.answer;
+                return '<div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-left space-y-1">' +
+                    '<p class="text-[10px] text-gold-400 font-bold uppercase">Q' + (idx + 1) + ': ' + (q.q || q.prompt) + '</p>' +
+                    '<p class="text-xs text-emerald-400 font-bold">Answer: ' + correctText + '</p>' +
+                    '</div>';
+            }).join('');
 
             playArea.innerHTML =
-                '<div class="text-center py-6 space-y-4">' +
-                '<div class="text-5xl animate-bounce">🏆</div>' +
-                '<h2 class="font-cinzel text-2xl font-bold text-gold-400">QUEST COMPLETED</h2>' +
-                '<p class="text-xs text-slate-300">VICTORIOUS DIVISION:</p>' +
-                '<div class="text-xl font-bold font-cinzel ' + topTeam.color + ' p-4 bg-slate-950/80 rounded-2xl border ' + topTeam.border + ' max-w-xs mx-auto">' +
-                topTeam.name + ' (' + maxScore + ' pts)' +
+                '<div class="text-center py-4 space-y-6">' +
+                '<div>' +
+                '<h2 class="font-cinzel text-2xl font-extrabold text-gold-400">FINAL CELESTIAL VICTORY</h2>' +
+                '<p class="text-xs text-slate-400">Winning Divisions & Individual Player Contributions</p>' +
                 '</div>' +
-                '<div class="flex flex-wrap justify-center gap-2 pt-2">' +
-                '<span class="px-3 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs rounded-full font-semibold">🎯 Scripture Scholar</span>' +
-                '<span class="px-3 py-1 bg-blue-500/20 border border-blue-500/40 text-blue-300 text-xs rounded-full font-semibold">🔥 Streak Master</span>' +
+
+                '<!-- TEAM PODIUM WITH MEMBER BREAKDOWN -->' +
+                '<div class="flex justify-center items-end gap-3 md:gap-4 pt-2 pb-2">' +
+                '<!-- 2nd Place Team -->' +
+                '<div class="flex flex-col items-center w-32 md:w-36">' +
+                '<span class="text-xs font-bold font-cinzel ' + team2nd.color + ' mb-1 tracking-wider">' + team2nd.name.split(' ')[0] + '</span>' +
+                '<div class="w-full bg-gradient-to-t from-slate-900 via-slate-850 to-slate-800 border border-slate-700 h-28 rounded-t-2xl flex flex-col items-center justify-center p-2 shadow-lg">' +
+                '<span class="text-xl">🥈</span>' +
+                '<span class="text-base font-bold font-mono text-slate-200">' + team2nd.teamScore + ' pts</span>' +
                 '</div>' +
+                '<!-- Player List below 2nd -->' +
+                '<div class="w-full bg-slate-900/90 border border-slate-800 rounded-b-xl p-2 mt-1 max-h-32 overflow-y-auto space-y-1">' +
+                renderPlayerRosterHTML(team2nd.members, team2nd.color) +
+                '</div>' +
+                '</div>' +
+
+                '<!-- 1st Place Champion Team -->' +
+                '<div class="flex flex-col items-center w-36 md:w-40">' +
+                '<span class="text-xs font-bold font-cinzel text-gold-300 mb-1 tracking-wider">👑 ' + team1st.name.split(' ')[0] + '</span>' +
+                '<div class="w-full bg-gradient-to-t from-amber-600 via-gold-500 to-amber-300 text-slate-950 border-2 border-gold-300 h-36 rounded-t-2xl flex flex-col items-center justify-center p-2 font-bold shadow-2xl gold-glow">' +
+                '<span class="text-3xl animate-bounce">🥇</span>' +
+                '<span class="text-lg font-mono font-black tracking-wider">' + team1st.teamScore + ' pts</span>' +
+                '<span class="text-[9px] uppercase tracking-widest font-extrabold bg-slate-950 text-gold-400 px-2 py-0.5 rounded-full mt-1">CHAMPIONS</span>' +
+                '</div>' +
+                '<!-- Player List below 1st -->' +
+                '<div class="w-full bg-slate-900/90 border border-gold-500/30 rounded-b-xl p-2 mt-1 max-h-36 overflow-y-auto space-y-1">' +
+                renderPlayerRosterHTML(team1st.members, 'text-gold-400') +
+                '</div>' +
+                '</div>' +
+
+                '<!-- 3rd Place Team -->' +
+                '<div class="flex flex-col items-center w-32 md:w-36">' +
+                '<span class="text-xs font-bold font-cinzel ' + team3rd.color + ' mb-1 tracking-wider">' + team3rd.name.split(' ')[0] + '</span>' +
+                '<div class="w-full bg-gradient-to-t from-slate-950 via-slate-900 to-slate-850 border border-slate-800 h-24 rounded-t-2xl flex flex-col items-center justify-center p-2 shadow-md">' +
+                '<span class="text-lg">🥉</span>' +
+                '<span class="text-sm font-bold font-mono text-slate-400">' + team3rd.teamScore + ' pts</span>' +
+                '</div>' +
+                '<!-- Player List below 3rd -->' +
+                '<div class="w-full bg-slate-900/90 border border-slate-800 rounded-b-xl p-2 mt-1 max-h-28 overflow-y-auto space-y-1">' +
+                renderPlayerRosterHTML(team3rd.members, team3rd.color) +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+
+                '<!-- AFTER-ACTION REVIEW LIST -->' +
+                '<div class="max-w-md mx-auto space-y-2 pt-2 max-h-36 overflow-y-auto pr-1">' +
+                '<h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider text-left flex items-center gap-2">' +
+                '<i data-lucide="book-marked" class="w-4 h-4 text-gold-400"></i> Doctrinal Mastery Review:' +
+                '</h4>' +
+                reviewHTML +
+                '</div>' +
+
                 '<div class="flex flex-col sm:flex-row gap-3 justify-center pt-2 max-w-xs mx-auto">' +
                 (isHost ?
-                    '<button onclick="resetToLobby()" class="flex-1 py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs font-cinzel tracking-wider shadow-lg">RETURN TO LOBBY</button>' :
+                    '<button onclick="resetToLobby()" class="flex-1 py-3 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 text-slate-950 font-bold rounded-xl text-xs font-cinzel tracking-wider shadow-lg">RETURN TO LOBBY</button>' :
                     '<p class="text-xs text-slate-400 italic">Waiting for host to return to lobby...</p>'
                 ) +
                 '<button onclick="goHome()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs">MAIN MENU</button>' +
                 '</div>' +
                 '</div>';
 
+            lucide.createIcons();
             renderLiveStandings();
         }
     </script>
