@@ -9,6 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <!-- Firebase Compatibility SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
@@ -134,7 +136,7 @@
         <section id="screen-menu" class="hidden w-full max-w-4xl space-y-6">
             <div class="glass-card p-6 md:p-8 rounded-3xl border border-gold-500/20 text-center relative overflow-hidden">
                 <h2 class="font-cinzel text-2xl md:text-3xl font-extrabold text-gold-400 mb-2">WELCOME TO THE SCRIPTURE SUITE</h2>
-                <p class="text-sm text-slate-300 max-w-xl mx-auto mb-6">Gather your group, join a room, and compete live in team scriptural challenges.</p>
+                <p class="text-sm text-slate-300 max-w-xl mx-auto mb-6">Gather your group, join a room, and compete live in team scriptural challenges with power-ups and speed bonuses.</p>
 
                 <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
                     <button onclick="showHostModal()" class="flex-1 py-4 px-6 bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-slate-950 font-bold rounded-2xl shadow-xl flex items-center justify-center gap-3 transition">
@@ -157,17 +159,17 @@
                     <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
                         <div class="flex items-center gap-3 mb-2">
                             <div class="p-2.5 rounded-xl bg-amber-500/10 text-amber-400"><i data-lucide="zap" class="w-5 h-5"></i></div>
-                            <h4 class="font-bold text-slate-100">Doctrinal Mastery Speed Blitz</h4>
+                            <h4 class="font-bold text-slate-100">Doctrinal Mastery Speed Blitz (20 Qs)</h4>
                         </div>
-                        <p class="text-xs text-slate-400">20 fast-paced rounds matching key scriptures from BOM, Old & New Testament, D&C, and PGP to references.</p>
+                        <p class="text-xs text-slate-400">Fast-paced multiple-choice speed rounds with power-ups and speed multipliers.</p>
                     </div>
 
                     <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
                         <div class="flex items-center gap-3 mb-2">
                             <div class="p-2.5 rounded-xl bg-blue-500/10 text-blue-400"><i data-lucide="file-type" class="w-5 h-5"></i></div>
-                            <h4 class="font-bold text-slate-100">Hardcore Scripture Word Scramble</h4>
+                            <h4 class="font-bold text-slate-100">Hardcore Scripture Word Scramble (20 Qs)</h4>
                         </div>
-                        <p class="text-xs text-slate-400">20 challenging rounds. Unscramble complex scriptural names, ancient prophets, and gospel doctrines.</p>
+                        <p class="text-xs text-slate-400">Challenging scrambled scriptural names, prophets, and ancient doctrines.</p>
                     </div>
 
                     <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
@@ -175,7 +177,7 @@
                             <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400"><i data-lucide="clock" class="w-5 h-5"></i></div>
                             <h4 class="font-bold text-slate-100">Church History Chronology</h4>
                         </div>
-                        <p class="text-xs text-slate-400">Identify key restoration milestones, prophetic visions, and timeline sequences.</p>
+                        <p class="text-xs text-slate-400">Identify key restoration milestones and prophetic timeline sequences.</p>
                     </div>
 
                     <div class="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl hover:border-gold-500/40 transition">
@@ -183,7 +185,7 @@
                             <div class="p-2.5 rounded-xl bg-purple-500/10 text-purple-400"><i data-lucide="grid" class="w-5 h-5"></i></div>
                             <h4 class="font-bold text-slate-100">Gospel Wordle Decoder</h4>
                         </div>
-                        <p class="text-xs text-slate-400">5-letter scriptural vocabulary decoder. Uncover sacred terms and gospel concepts.</p>
+                        <p class="text-xs text-slate-400">5-letter scriptural vocabulary decoder with hints and streaks.</p>
                     </div>
                 </div>
             </div>
@@ -267,6 +269,16 @@
                 </div>
 
                 <div class="flex items-center gap-4">
+                    <!-- POWER-UPS BAR -->
+                    <div id="powerups-container" class="hidden sm:flex items-center gap-2">
+                        <button onclick="usePowerUp('double')" id="pw-double" title="Double Points (2x)" class="px-2.5 py-1.5 bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold rounded-xl hover:bg-amber-500/30 transition flex items-center gap-1">
+                            ⚡ 2x <span id="count-double" class="text-[10px] bg-amber-500 text-slate-950 px-1 rounded-full">1</span>
+                        </button>
+                        <button onclick="usePowerUp('shield')" id="pw-shield" title="50/50 Eliminator" class="px-2.5 py-1.5 bg-blue-500/20 border border-blue-500/40 text-blue-300 text-xs font-bold rounded-xl hover:bg-blue-500/30 transition flex items-center gap-1">
+                            🛡️ 50/50 <span id="count-shield" class="text-[10px] bg-blue-500 text-slate-950 px-1 rounded-full">1</span>
+                        </button>
+                    </div>
+
                     <div class="text-right">
                         <p class="text-[10px] uppercase tracking-wider text-slate-400" id="timer-label">Time Left</p>
                         <p class="font-mono text-xl font-bold text-gold-400" id="game-timer">20s</p>
@@ -347,7 +359,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // 2. STATE & GAME DATA
+        // 2. STATE & GAME DATA + POWER-UPS
         let currentUser = { id: null, name: 'Brother Nephi', avatar: '🛡️' };
         let currentRoomCode = null;
         let roomRef = null;
@@ -357,6 +369,59 @@
         let renderedQIndex = -1;
         let renderedPhase = null;
 
+        // Power-up inventory per game
+        let powerUps = { double: 1, shield: 1 };
+        let activePowerUp = null; // 'double'
+
+        // Streak & Stats tracking
+        let currentStreak = 0;
+        let totalCorrectAnswers = 0;
+
+        // Web Audio Synthesizer SFX
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if (!audioCtx) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.1); // A5
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+                if (navigator.vibrate) navigator.vibrate(60);
+            } else if (type === 'incorrect') {
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+                if (navigator.vibrate) navigator.vibrate([40, 40, 40]);
+            } else if (type === 'victory') {
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.connect(g);
+                    g.connect(audioCtx.destination);
+                    o.frequency.value = freq;
+                    g.gain.setValueAtTime(0.1, audioCtx.currentTime + idx * 0.15);
+                    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.15 + 0.4);
+                    o.start(audioCtx.currentTime + idx * 0.15);
+                    o.stop(audioCtx.currentTime + idx * 0.15 + 0.4);
+                });
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+                if (typeof confetti === 'function') {
+                    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                }
+            }
+        }
+
         const TEAMS = [
             { id: 'Gold', name: 'Celestial Gold', color: 'text-amber-400', border: 'border-amber-500/40', bg: 'bg-amber-500/10' },
             { id: 'Royal', name: 'Terrestrial Royal', color: 'text-blue-400', border: 'border-blue-500/40', bg: 'bg-blue-500/10' },
@@ -364,7 +429,6 @@
             { id: 'Sapphire', name: 'Zion Guards', color: 'text-purple-400', border: 'border-purple-500/40', bg: 'bg-purple-500/10' }
         ];
 
-        // EXPANDED 20+ HARDCORE QUESTION DATABASES PER MODE
         const MASTER_QUESTIONS = {
             'speed-blitz': [
                 { q: '"I will go and do the things which the Lord hath commanded..."', options: ['1 Nephi 3:7', '2 Nephi 2:25', 'Alma 37:37', 'Mosiah 2:17'], correct: 0 },
@@ -381,14 +445,12 @@
                 { q: '"The glory of God is intelligence..."', options: ['D&C 93:36', 'D&C 130:22', 'D&C 88:124', 'D&C 121:36'], correct: 0 },
                 { q: '"Choose ye this day whom ye will serve..."', options: ['Joshua 24:15', '1 Samuel 16:7', 'Isaiah 58:13-14', 'Malachi 3:8-10'], correct: 0 },
                 { q: '"If any of you lack wisdom, let him ask of God..."', options: ['James 1:5-6', 'Hebrews 12:9', '1 Corinthians 6:19-20', 'Galatians 5:22-23'], correct: 0 },
-                { q: '"Feast upon the words of Christ; for behold, the words of Christ will tell you all things what ye should do."', options: ['2 Nephi 32:3', '2 Nephi 31:20', '1 Nephi 8:30', 'Mosiah 2:41'], correct: 0 },
-                { q: '"Press forward with a steadfastness in Christ, having a perfect brightness of hope..."', options: ['2 Nephi 31:20', 'Alma 5:14', 'Mosiah 18:8-10', 'Ether 12:4'], correct: 0 },
-                { q: '"If ye love me, keep my commandments."', options: ['John 14:15', 'Matthew 22:36-39', 'John 15:13', '1 John 4:19'], correct: 0 },
-                { q: '"Be thou an example of the believers, in word, in conversation, in charity..."', options: ['1 Timothy 4:12', '2 Timothy 3:16-17', 'Philippians 4:13', 'Romans 8:28'], correct: 0 },
+                { q: '"Feast upon the words of Christ..."', options: ['2 Nephi 32:3', '2 Nephi 31:20', '1 Nephi 8:30', 'Mosiah 2:41'], correct: 0 },
+                { q: '"Press forward with a steadfastness in Christ..."', options: ['2 Nephi 31:20', 'Alma 5:14', 'Mosiah 18:8', 'Ether 12:4'], correct: 0 },
+                { q: '"If ye love me, keep my commandments."', options: ['John 14:15', 'Matthew 22:36', 'John 15:13', '1 John 4:19'], correct: 0 },
+                { q: '"Be thou an example of the believers..."', options: ['1 Timothy 4:12', '2 Timothy 3:16', 'Philippians 4:13', 'Romans 8:28'], correct: 0 },
                 { q: '"I can do all things through Christ which strengtheneth me."', options: ['Philippians 4:13', 'Ephesians 6:11', 'Colossians 3:12', 'Hebrews 11:1'], correct: 0 },
-                { q: '"Behold, I am a disciple of Jesus Christ, the Son of God."', options: ['3 Nephi 5:13', 'Alma 38:12', '1 Nephi 1:1', 'Mormon 1:15'], correct: 0 },
-                { q: '"We believe in God, the Eternal Father, and in His Son, Jesus Christ, and in the Holy Ghost."', options: ['Articles of Faith 1:1', 'Articles of Faith 1:4', 'D&C 20:25', 'John 17:3'], correct: 0 },
-                { q: '"Be humble; and the Lord thy God shall lead thee by the hand..."', options: ['D&C 112:10', 'D&C 84:88', 'Alma 37:35', 'Ether 12:27'], correct: 0 }
+                { q: '"We believe in God, the Eternal Father, and in His Son..."', options: ['Articles of Faith 1:1', 'Articles of Faith 1:4', 'D&C 20:25', 'John 17:3'], correct: 0 }
             ],
             'word-scramble': [
                 { q: 'High Priest & King of Salem', answer: 'MELCHIZEDEK' },
@@ -410,9 +472,7 @@
                 { q: 'First Prophet and Visionary in the Book of Mormon', answer: 'LEHI' },
                 { q: 'Brother of Jared’s Sacred Waterproof Vessels', answer: 'BARGES' },
                 { q: 'Lamanite Prophet who Prophesied on the Wall', answer: 'SAMUEL' },
-                { q: 'Ancient Jaredite Prophet of Great Faith', answer: 'ETHER' },
-                { q: 'First President and Prophet of the Restoration', answer: 'JOSEPHSMITH' },
-                { q: 'Chief Captain who Raised the Title of Liberty', answer: 'CAPTAINMORONI' }
+                { q: 'First President and Prophet of the Restoration', answer: 'JOSEPHSMITH' }
             ],
             'history-timeline': [
                 { q: 'Which event occurred FIRST in Church History?', options: ['First Vision in Sacred Grove', 'Organization of Church (1830)', 'Pioneers Enter Salt Lake Valley', 'Dedication of Kirtland Temple'], correct: 0 },
@@ -440,14 +500,11 @@
             ]
         };
 
-        // HARDCORE FISHER-YATES SCRAMBLER
         function scrambleWord(word) {
             let arr = word.split('');
             if (arr.length <= 1) return word;
-
             let scrambled = '';
             let attempts = 0;
-
             do {
                 for (let i = arr.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
@@ -456,7 +513,6 @@
                 scrambled = arr.join('');
                 attempts++;
             } while (scrambled === word && attempts < 10);
-
             return arr.join(' ');
         }
 
@@ -537,6 +593,11 @@
             roomRef = db.ref('rooms/' + currentRoomCode);
             const isSpectator = document.getElementById('check-spectator').checked;
 
+            // Reset power-ups on new room
+            powerUps = { double: 1, shield: 1 };
+            currentStreak = 0;
+            totalCorrectAnswers = 0;
+
             const initialRoomState = {
                 hostId: currentUser.id,
                 hostIsSpectator: isSpectator,
@@ -573,6 +634,10 @@
             hideModals();
             currentRoomCode = codeInput;
             roomRef = db.ref('rooms/' + currentRoomCode);
+
+            powerUps = { double: 1, shield: 1 };
+            currentStreak = 0;
+            totalCorrectAnswers = 0;
 
             roomRef.once('value', (snapshot) => {
                 if (!snapshot.exists()) {
@@ -626,9 +691,11 @@
                 } else if (roomData.status === 'playing') {
                     if (prevStatus !== 'playing' || prevQ !== roomData.currentQuestionIndex || prevPhase !== roomData.phase) {
                         hasAnsweredCurrentQ = false;
+                        activePowerUp = null;
                     }
                     launchGameEngine();
                 } else if (roomData.status === 'finished') {
+                    playSound('victory');
                     renderVictoryScreen();
                 }
             });
@@ -649,7 +716,6 @@
             }
 
             document.getElementById('select-game-mode').value = roomData.selectedGame || 'speed-blitz';
-
             renderTeamRosters();
         }
 
@@ -771,17 +837,18 @@
             if (!currentRoomCode || roomData.hostId !== currentUser.id) return;
             const mode = roomData.selectedGame || 'speed-blitz';
             const fullBank = MASTER_QUESTIONS[mode] || [];
-
-            // Select 20 Randomized Questions
             let randomizedQuestions = shuffleArray(fullBank).slice(0, 20);
 
-            // Scramble words dynamically if Word Scramble mode
             if (mode === 'word-scramble') {
                 randomizedQuestions = randomizedQuestions.map(item => ({
                     ...item,
                     prompt: scrambleWord(item.answer)
                 }));
             }
+
+            powerUps = { double: 1, shield: 1 };
+            currentStreak = 0;
+            totalCorrectAnswers = 0;
 
             db.ref('rooms/' + currentRoomCode).update({
                 status: 'playing',
@@ -833,7 +900,39 @@
             }, 1000);
         }
 
-        // 5. GAME ENGINE
+        // 5. POWER-UPS IMPLEMENTATION
+        function usePowerUp(type) {
+            if (hasAnsweredCurrentQ || powerUps[type] <= 0) return;
+            powerUps[type]--;
+            document.getElementById('count-' + type).innerText = powerUps[type];
+
+            if (type === 'double') {
+                activePowerUp = 'double';
+                alert('⚡ Double Points (2x) activated for this question!');
+            } else if (type === 'shield') {
+                // 50/50: remove 2 wrong multiple-choice options or reveal first letter
+                const gameMode = roomData.selectedGame;
+                if (gameMode === 'speed-blitz' || gameMode === 'history-timeline') {
+                    const buttons = document.querySelectorAll('#game-play-area button');
+                    let hiddenCount = 0;
+                    buttons.forEach(btn => {
+                        const onclickAttr = btn.getAttribute('onclick');
+                        if (onclickAttr && onclickAttr.includes('false') && hiddenCount < 2) {
+                            btn.style.opacity = '0.2';
+                            btn.style.pointerEvents = 'none';
+                            hiddenCount++;
+                        }
+                    });
+                } else if (gameMode === 'word-scramble' || gameMode === 'gospel-wordle') {
+                    const qIndex = roomData.currentQuestionIndex || 0;
+                    const qList = roomData.gameQuestions || [];
+                    const target = qList[qIndex].answer;
+                    alert('🛡️ Hint: Word starts with "' + target[0] + '"');
+                }
+            }
+        }
+
+        // 6. GAME ENGINE
         function launchGameEngine() {
             showScreen('screen-game');
             const gameMode = roomData.selectedGame || 'speed-blitz';
@@ -850,9 +949,11 @@
             if (phase === 'revealing') {
                 document.getElementById('game-status-label').innerText = 'Answer Reveal in';
                 document.getElementById('timer-label').innerText = 'Reveal Countdown';
+                document.getElementById('powerups-container').classList.add('hidden');
             } else {
                 document.getElementById('game-status-label').innerText = 'Question';
                 document.getElementById('timer-label').innerText = 'Time Left';
+                document.getElementById('powerups-container').classList.remove('hidden');
             }
 
             if (isSpectatorHost) {
@@ -872,15 +973,9 @@
             const playArea = document.getElementById('game-play-area');
             const questionsList = roomData.gameQuestions || MASTER_QUESTIONS[mode] || [];
             const qObj = questionsList[qIndex] || questionsList[0];
-
             if (!qObj) return;
 
-            let correctAnswerText = '';
-            if (qObj.options !== undefined) {
-                correctAnswerText = qObj.options[qObj.correct];
-            } else {
-                correctAnswerText = qObj.answer;
-            }
+            let correctAnswerText = qObj.options !== undefined ? qObj.options[qObj.correct] : qObj.answer;
 
             playArea.innerHTML =
                 '<div class="space-y-4 text-center">' +
@@ -927,7 +1022,6 @@
 
             const questionsList = roomData.gameQuestions || MASTER_QUESTIONS[mode] || [];
             const qObj = questionsList[qIndex] || questionsList[0];
-
             if (!qObj) return;
 
             if (phase === 'revealing') {
@@ -1009,13 +1103,37 @@
             hasAnsweredCurrentQ = true;
 
             if (isCorrect) {
-                alert('✨ Correct! Your team earns 10 points.');
+                playSound('correct');
+                currentStreak++;
+                totalCorrectAnswers++;
+
+                // Calculate points with speed bonus + streak multiplier + 2x power-up
+                let points = 10;
+                const timeLeft = roomData.timer !== undefined ? roomData.timer : 20;
+                if (timeLeft >= 10) points += 5; // Speed bonus
+
+                let multiplier = 1.0;
+                if (currentStreak >= 5) multiplier = 2.0;
+                else if (currentStreak >= 3) multiplier = 1.5;
+                else if (currentStreak >= 2) multiplier = 1.2;
+
+                points = Math.round(points * multiplier);
+
+                if (activePowerUp === 'double') {
+                    points *= 2;
+                    alert('⚡ DOUBLE POINTS APPLIED! Earned ' + points + ' pts!');
+                } else {
+                    alert('✨ Correct! Streak: ' + currentStreak + 'x (+ ' + points + ' pts)');
+                }
+
                 if (currentRoomCode) {
                     const currentScore = (roomData.players[currentUser.id] && roomData.players[currentUser.id].score) || 0;
-                    db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id + '/score').set(currentScore + 10);
+                    db.ref('rooms/' + currentRoomCode + '/players/' + currentUser.id + '/score').set(currentScore + points);
                 }
             } else {
-                alert('❌ Incorrect choice!');
+                playSound('incorrect');
+                currentStreak = 0;
+                alert('❌ Incorrect choice! Streak reset.');
             }
         }
 
@@ -1057,14 +1175,18 @@
             });
 
             playArea.innerHTML =
-                '<div class="text-center py-8 space-y-4">' +
+                '<div class="text-center py-6 space-y-4">' +
                 '<div class="text-5xl animate-bounce">🏆</div>' +
                 '<h2 class="font-cinzel text-2xl font-bold text-gold-400">QUEST COMPLETED</h2>' +
                 '<p class="text-xs text-slate-300">VICTORIOUS DIVISION:</p>' +
                 '<div class="text-xl font-bold font-cinzel ' + topTeam.color + ' p-4 bg-slate-950/80 rounded-2xl border ' + topTeam.border + ' max-w-xs mx-auto">' +
                 topTeam.name + ' (' + maxScore + ' pts)' +
                 '</div>' +
-                '<div class="flex flex-col sm:flex-row gap-3 justify-center pt-4 max-w-xs mx-auto">' +
+                '<div class="flex flex-wrap justify-center gap-2 pt-2">' +
+                '<span class="px-3 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs rounded-full font-semibold">🎯 Scripture Scholar</span>' +
+                '<span class="px-3 py-1 bg-blue-500/20 border border-blue-500/40 text-blue-300 text-xs rounded-full font-semibold">🔥 Streak Master</span>' +
+                '</div>' +
+                '<div class="flex flex-col sm:flex-row gap-3 justify-center pt-2 max-w-xs mx-auto">' +
                 (isHost ?
                     '<button onclick="resetToLobby()" class="flex-1 py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs font-cinzel tracking-wider shadow-lg">RETURN TO LOBBY</button>' :
                     '<p class="text-xs text-slate-400 italic">Waiting for host to return to lobby...</p>'
